@@ -1,0 +1,49 @@
+name: Bug report
+description: Report a defect in SaaFarr.AI.Prompt
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug. Security issues → see SECURITY.md (private reporting).
+  - type: textarea
+    id: describe
+    attributes:
+      label: Describe the bug
+      description: Clear and concise description of what is wrong.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Minimal C# sample using SaaFarr.AI.Prompt.*
+      render: csharp
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: tfm
+    attributes:
+      label: Target framework
+      options:
+        - netstandard2.0
+        - net6.0
+        - net8.0
+        - net10.0
+        - multiple / other
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true

@@ -1,0 +1,111 @@
+# Release / Publish — SaaFarr.AI.Prompt
+#
+# Why: open-source consumers install from nuget.org. Publishing must be
+# automated, tagged, and auditable — never a manual `dotnet nuget push`
+# from a developer laptop with a long-lived key in a shell history.
+#
+# Triggers: version tags like v1.0.0 or manual workflow_dispatch.
+
+name: Release
+
+on:
+  # Stage: semantic version tags push the package
+  push:
+    tags:
+      - 'v*.*.*'
+  # Stage: allow maintainers to re-run a publish without retagging
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Build and pack only (skip nuget.org push)'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  CI: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Stage: RELEASE
+  # Build → test → pack → (optional) push to nuget.org via Trusted Publishing
+  # (OIDC → short-lived API key). See https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing
+  # ---------------------------------------------------------------------------
+  release:
+    name: Release to NuGet
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      # packages: write  # enable if also pushing to GitHub Packages
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+          cache: true
+          cache-dependency-path: |
+            packages.lock.json
+            tests/SaaFarr.AI.Prompt.Tests/packages.lock.json
+
+      # Stage step: verify the tagged commit still builds
+      - name: Restore and build
+        run: |
+          dotnet restore SaaFarr.AI.Prompt.sln --locked-mode
+          dotnet build SaaFarr.AI.Prompt.sln -c Release --no-restore
+
+      # Stage step: never publish a package that fails its own tests
+      - name: Test
+        run: >
+          dotnet test tests/SaaFarr.AI.Prompt.Tests/SaaFarr.AI.Prompt.Tests.csproj
+          -c Release
+          --no-build
+          /p:CollectCoverage=true
+          /p:Threshold=95
+          /p:ThresholdType=line
+
+      # Stage step: create nupkg + snupkg (symbols for debugger SourceLink)
+      - name: Pack
+        run: >
+          dotnet pack SaaFarr.AI.Prompt.csproj
+          -c Release
+          --no-build
+          -o ./artifacts
+          /p:ContinuousIntegrationBuild=true
+
+      # Request the short-lived key immediately before push (keys expire in ~1 hour).
+      - name: NuGet login (OIDC)
+        if: github.event_name == 'push' || inputs.dry_run == 'false'
+        uses: NuGet/login@v1
+        id: login
+        with:
+          # nuget.org profile name, not email. Repository secret NUGET_USER.
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Push to NuGet.org
+        if: github.event_name == 'push' || inputs.dry_run == 'false'
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: >
+          dotnet nuget push ./artifacts/*.nupkg
+          --api-key "$NUGET_API_KEY"
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-packages
+          path: ./artifacts/

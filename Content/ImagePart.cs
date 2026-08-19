@@ -1,7 +1,7 @@
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Models;
 
-namespace SaaFarr.AI.Prompt.Content;
+namespace Mima.AI.Prompt.Content;
 
 /// <summary>Image content part (URL or base64).</summary>
 public sealed class ImagePart : IContentPart

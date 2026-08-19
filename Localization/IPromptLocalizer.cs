@@ -1,6 +1,6 @@
-using SaaFarr.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Interfaces;
 
-namespace SaaFarr.AI.Prompt.Localization;
+namespace Mima.AI.Prompt.Localization;
 
 /// <summary>
 /// Interface for localizing prompts and templates to different languages/locales.

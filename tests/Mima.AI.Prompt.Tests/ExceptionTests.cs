@@ -1,7 +1,7 @@
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Exceptions;
+using Mima.AI.Prompt.Exceptions;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 public class ExceptionTests
 {

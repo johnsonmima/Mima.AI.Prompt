@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
-using SaaFarr.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Interfaces;
 
-namespace SaaFarr.AI.Prompt.Caching;
+namespace Mima.AI.Prompt.Caching;
 
 /// <summary>
 /// Thread-safe in-memory prompt cache with TTL support.

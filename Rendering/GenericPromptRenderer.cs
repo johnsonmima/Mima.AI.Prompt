@@ -1,8 +1,8 @@
 using System.Text.Json;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Serialization;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Serialization;
 
-namespace SaaFarr.AI.Prompt.Rendering;
+namespace Mima.AI.Prompt.Rendering;
 
 /// <summary>
 /// A generic, provider-agnostic prompt renderer that produces standard JSON output.

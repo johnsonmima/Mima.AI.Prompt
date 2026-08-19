@@ -1,7 +1,7 @@
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Models;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 public class PromptConstraintsTests
 {

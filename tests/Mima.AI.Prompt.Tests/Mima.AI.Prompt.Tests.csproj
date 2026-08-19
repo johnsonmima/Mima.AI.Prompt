@@ -8,7 +8,7 @@
     <CollectCoverage>true</CollectCoverage>
     <CoverletOutputFormat>cobertura,opencover</CoverletOutputFormat>
     <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute</ExcludeByAttribute>
-    <Include>[SaaFarr.AI.Prompt]*</Include>
+    <Include>[Mima.AI.Prompt]*</Include>
     <!-- GitHub Actions setup-dotnet cache: true hashes these lock files -->
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SaaFarr.AI.Prompt.csproj" />
+    <ProjectReference Include="..\..\Mima.AI.Prompt.csproj" />
   </ItemGroup>
 
 </Project>

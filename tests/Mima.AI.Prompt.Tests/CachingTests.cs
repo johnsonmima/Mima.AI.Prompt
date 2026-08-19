@@ -1,8 +1,8 @@
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Builder;
-using SaaFarr.AI.Prompt.Caching;
+using Mima.AI.Prompt.Builder;
+using Mima.AI.Prompt.Caching;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 public class CachingTests
 {

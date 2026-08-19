@@ -1,7 +1,7 @@
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
 
-namespace SaaFarr.AI.Prompt.Messages;
+namespace Mima.AI.Prompt.Messages;
 
 /// <summary>
 /// Legacy function-result message. Prefer <see cref="ToolMessage"/> + assistant <see cref="ToolCall"/> for new code.

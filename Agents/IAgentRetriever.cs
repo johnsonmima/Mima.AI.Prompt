@@ -1,6 +1,6 @@
-using SaaFarr.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Interfaces;
 
-namespace SaaFarr.AI.Prompt.Agents;
+namespace Mima.AI.Prompt.Agents;
 
 /// <summary>
 /// Host-provided retrieval (RAG). This package does not retrieve documents;

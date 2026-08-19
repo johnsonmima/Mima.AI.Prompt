@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Models;
+namespace Mima.AI.Prompt.Models;
 
 /// <summary>
 /// Represents the result of validating a template's variables.

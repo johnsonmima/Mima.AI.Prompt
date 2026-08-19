@@ -1,12 +1,12 @@
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Agents;
-using SaaFarr.AI.Prompt.Content;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
+using Mima.AI.Prompt.Agents;
+using Mima.AI.Prompt.Content;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 public class AgentTests
 {

@@ -1,7 +1,7 @@
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
 
-namespace SaaFarr.AI.Prompt.Models;
+namespace Mima.AI.Prompt.Models;
 
 /// <summary>
 /// Represents an ongoing conversation with history support.

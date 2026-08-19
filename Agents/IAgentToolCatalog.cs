@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Agents;
+namespace Mima.AI.Prompt.Agents;
 
 /// <summary>
 /// Host-provided tool catalog. Optional richer descriptions are folded into system instructions

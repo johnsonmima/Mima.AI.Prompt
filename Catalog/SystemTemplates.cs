@@ -1,6 +1,6 @@
-using SaaFarr.AI.Prompt.Templates;
+using Mima.AI.Prompt.Templates;
 
-namespace SaaFarr.AI.Prompt.Catalog;
+namespace Mima.AI.Prompt.Catalog;
 
 /// <summary>
 /// Built-in system message templates for common AI personas.

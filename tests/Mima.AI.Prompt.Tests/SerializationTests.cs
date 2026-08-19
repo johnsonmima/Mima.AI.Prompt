@@ -1,14 +1,14 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
-using SaaFarr.AI.Prompt.Serialization;
-using SaaFarr.AI.Prompt.Templates;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
+using Mima.AI.Prompt.Serialization;
+using Mima.AI.Prompt.Templates;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 public class SerializationTests
 {

@@ -1,8 +1,8 @@
-namespace SaaFarr.AI.Prompt.Roles;
+namespace Mima.AI.Prompt.Roles;
 
 /// <summary>
 /// System role - defines the AI's identity, behavior, and permanent rules.
-/// This is the highest priority instruction and should contain rules 
+/// This is the highest priority instruction and should contain rules
 /// rather than user-specific information.
 /// </summary>
 /// <example>

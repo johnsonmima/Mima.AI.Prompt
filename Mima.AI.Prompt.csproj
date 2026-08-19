@@ -6,40 +6,39 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    
-    <!-- Package Metadata — aligned with https://github.com/johnsonmima/SaaFarr.AI.Prompt -->
-    <PackageId>SaaFarr.AI.Prompt</PackageId>
-    <Title>SaaFarr.AI.Prompt — Prompt Engineering Library</Title>
+
+    <!-- Package Metadata — aligned with https://github.com/johnsonmima/Mima.AI.Prompt -->
+    <PackageId>Mima.AI.Prompt</PackageId>
+    <Title>Mima.AI.Prompt — Prompt Engineering Library</Title>
     <Description>
-      A strongly typed, fluent prompt engineering library for .NET applications.
-      Build, validate, and render prompts as first-class software assets.
-      Supports templates, variables, validation, and provider-agnostic design.
+      Prompt engineering for .NET: typed messages, templates, validation, serialization, and JSON format adapters.
+      AgentSpec/AgentCrew compose prompts only — this package does not call models, run tools, or emit a provider tools array.
     </Description>
     <Authors>Johnson Olusegun</Authors>
-    <Company>SaaFarr</Company>
+    <Company>Mima</Company>
     <Copyright>Copyright (c) 2026 Johnson Olusegun</Copyright>
-    <PackageProjectUrl>https://github.com/johnsonmima/SaaFarr.AI.Prompt</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/johnsonmima/SaaFarr.AI.Prompt</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/johnsonmima/Mima.AI.Prompt</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/johnsonmima/Mima.AI.Prompt</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryBranch>main</RepositoryBranch>
-    <PackageTags>ai;openai;llm;prompt;prompt-engineering;genai;rag;agents;anthropic;azure-openai;ollama;saafarr</PackageTags>
+    <PackageTags>ai;openai;llm;prompt;prompt-engineering;genai;rag;agents;anthropic;azure-openai;ollama;mima</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageReleaseNotes>Initial release with core domain model, templates, fluent builder, validation, serialization, caching, versioning, and provider adapters.</PackageReleaseNotes>
-    
+
     <!-- Source Link -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
-    
+
     <!-- Version -->
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <AssemblyName>SaaFarr.AI.Prompt</AssemblyName>
-    <RootNamespace>SaaFarr.AI.Prompt</RootNamespace>
+    <AssemblyName>Mima.AI.Prompt</AssemblyName>
+    <RootNamespace>Mima.AI.Prompt</RootNamespace>
     <!-- GitHub Actions setup-dotnet cache: true hashes these lock files -->
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
@@ -80,7 +79,7 @@
 
   <!-- Allow unit tests to access internal members (e.g. Prompt ctor) -->
   <ItemGroup>
-    <InternalsVisibleTo Include="SaaFarr.AI.Prompt.Tests" />
+    <InternalsVisibleTo Include="Mima.AI.Prompt.Tests" />
   </ItemGroup>
 
 </Project>

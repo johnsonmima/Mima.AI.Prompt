@@ -1,8 +1,10 @@
-# Building agents with SaaFarr.AI.Prompt
+# Building agent-shaped prompts with Mima.AI.Prompt
 
-This guide explains how to build **agents** with this library, with copy-paste examples.
+This guide is about **composing** agent-style prompts (`AgentSpec` → `Prompt` → adapter JSON).
 
-**Start here if you want the short version:** [README → Building agents](README.md#building-agents)
+It is **not** an agent runtime. There is no model HTTP client, no tool executor, and no `RunAsync` that talks to OpenAI for you. Your app owns those.
+
+**Start here if you want the short version:** [README → What this is (and is not)](README.md#what-this-is-and-is-not) and [Building agents](README.md#building-agents)
 
 ---
 
@@ -33,7 +35,7 @@ You build that prompt with `AgentSpec` (or `PromptBuilder`). **Your app** then:
                    │ builds / updates
                    ▼
 ┌──────────────────────────────────────────┐
-│  SaaFarr.AI.Prompt                       │
+│  Mima.AI.Prompt                       │
 │  AgentSpec → Prompt → adapter JSON       │
 └──────────────────────────────────────────┘
 ```
@@ -52,7 +54,7 @@ Both produce a normal `Prompt`. Prefer sugar first; drop to the builder when you
 ## 5-minute start: your first agent
 
 ```csharp
-using SaaFarr.AI.Prompt.Agents;
+using Mima.AI.Prompt.Agents;
 
 var agent = AgentSpec.Create("helper")
     .WithInstructions("You are a concise assistant. Prefer short answers.");
@@ -74,7 +76,7 @@ Next step in your app: send `prompt` to your model (or use `new OpenAiAdapter().
 
 This is the common “agent loop”. **Who does what:**
 
-| Step | SaaFarr.AI.Prompt | Your app |
+| Step | Mima.AI.Prompt | Your app |
 | ------ | ------------------- | ---------- |
 | 1. Define agent + advertise tools | `AgentSpec`, `WithTools` / `IAgentToolCatalog` | Implement the real C# tools |
 | 2. Build prompt + call model | `BuildPrompt`, `OpenAiAdapter.ToJson` | HTTP / SDK request; optionally send a provider `tools` array |
@@ -131,8 +133,8 @@ Nothing in this library or on the provider host *invokes* that name. The HTTP re
 ### Step 1 — Define the agent (and optionally a catalog schema)
 
 ```csharp
-using SaaFarr.AI.Prompt.Agents;
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Agents;
+using Mima.AI.Prompt.Models;
 
 var conversation = Conversation.Create("weather-session");
 
@@ -274,7 +276,7 @@ The `foreach` is required even for a single tool; with two tools it just runs tw
 #### 2a. Build messages
 
 ```csharp
-using SaaFarr.AI.Prompt.Providers;
+using Mima.AI.Prompt.Providers;
 
 var prompt = agent.BuildPrompt("What's the weather in NYC?");
 string messagesJson = new OpenAiAdapter().ToJson(prompt);
@@ -490,7 +492,7 @@ Providers differ slightly; OpenAI-style responses look like the following. This 
 
 Map that into this library’s types:
 
-| Provider field | SaaFarr type / property |
+| Provider field | Mima type / property |
 | ---------------- | ------------------------- |
 | `tool_calls[].id` | `ToolCall.Id` |
 | `tool_calls[].function.name` | `ToolCall.Name` |
@@ -498,8 +500,8 @@ Map that into this library’s types:
 | optional assistant text | `AssistantMessage` content |
 
 ```csharp
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
 
 // After you parse the HTTP response yourself:
 var assistantTurn = AssistantMessage.CreateWithToolCalls(
@@ -608,7 +610,7 @@ Send the rebuilt `prompt`. When the reply has **no** `tool_calls`, treat `conten
 Sometimes one prompt should contain several “speakers” (writer, critic, moderator). That is still **one** `Prompt` with custom roles — not a scheduler.
 
 ```csharp
-using SaaFarr.AI.Prompt.Agents;
+using Mima.AI.Prompt.Agents;
 
 var crew = AgentCrew.Create("docs")
     .WithOrchestratorInstructions("Host a short debate. Keep each turn focused.")
@@ -653,7 +655,7 @@ We do **not** ship HTTP clients, tool runners, or RAG engines. We expose **hooks
 ### Example: RAG without owning HTTP
 
 ```csharp
-using SaaFarr.AI.Prompt.Agents;
+using Mima.AI.Prompt.Agents;
 
 public sealed class MyRetriever : IAgentRetriever
 {
@@ -752,8 +754,8 @@ Useful when you want every message explicit.
 ### Tools
 
 ```csharp
-using SaaFarr.AI.Prompt.Builder;
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Builder;
+using Mima.AI.Prompt.Models;
 
 var prompt = PromptBuilder.Create()
     .AddSystem("You are a weather agent. Call get_weather when needed.")
@@ -768,7 +770,7 @@ var prompt = PromptBuilder.Create()
 ### Custom roles
 
 ```csharp
-using SaaFarr.AI.Prompt.Roles;
+using Mima.AI.Prompt.Roles;
 
 var writer = MessageRole.Custom("writer");
 var critic = MessageRole.Custom("critic");
@@ -804,9 +806,9 @@ ComputerActionPart.Create("click", "{\"x\":120,\"y\":80}")
 Put them on the **same message** (usually `UserMessage`) so one observation is atomic:
 
 ```csharp
-using SaaFarr.AI.Prompt.Content;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
+using Mima.AI.Prompt.Content;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
 
 var observation = UserMessage.Create(new IContentPart[]
 {
@@ -848,9 +850,9 @@ var observation = UserMessage.Create(new IContentPart[]
 On the first step you often have **no** prior action yet:
 
 ```csharp
-using SaaFarr.AI.Prompt.Builder;
-using SaaFarr.AI.Prompt.Content;
-using SaaFarr.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Builder;
+using Mima.AI.Prompt.Content;
+using Mima.AI.Prompt.Interfaces;
 
 byte[] png = CaptureScreen(); // your code
 string b64 = Convert.ToBase64String(png);
@@ -935,7 +937,7 @@ Prefer `ScreenshotPart` over `ImagePart` for UI-agent loops so the intent (“th
 #### Using AgentSpec
 
 ```csharp
-using SaaFarr.AI.Prompt.Agents;
+using Mima.AI.Prompt.Agents;
 
 var agent = AgentSpec.Create("browser")
     .WithInstructions("""

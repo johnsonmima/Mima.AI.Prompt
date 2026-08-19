@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Roles;
+namespace Mima.AI.Prompt.Roles;
 
 /// <summary>
 /// Tool role - represents the output of a tool or function call.

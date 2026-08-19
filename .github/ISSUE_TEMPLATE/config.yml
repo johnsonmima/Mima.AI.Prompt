@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security vulnerability
-    url: https://github.com/johnsonmima/SaaFarr.AI.Prompt/security/advisories/new
+    url: https://github.com/johnsonmima/Mima.AI.Prompt/security/advisories/new
     about: Report security issues privately (do not open a public issue).
   - name: Questions / discussion
-    url: https://github.com/johnsonmima/SaaFarr.AI.Prompt/discussions
+    url: https://github.com/johnsonmima/Mima.AI.Prompt/discussions
     about: Ask usage questions if Discussions are enabled.

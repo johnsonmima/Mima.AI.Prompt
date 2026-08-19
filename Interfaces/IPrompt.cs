@@ -1,6 +1,6 @@
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Models;
 
-namespace SaaFarr.AI.Prompt.Interfaces;
+namespace Mima.AI.Prompt.Interfaces;
 
 /// <summary>
 /// A complete prompt: ordered messages plus optional response format for structured outputs.

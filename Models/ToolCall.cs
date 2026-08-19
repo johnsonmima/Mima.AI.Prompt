@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Models;
+namespace Mima.AI.Prompt.Models;
 
 /// <summary>
 /// An outbound tool invocation requested by the assistant (provider <c>tool_calls</c> / <c>tool_use</c>).

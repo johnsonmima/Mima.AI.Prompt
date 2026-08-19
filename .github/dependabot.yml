@@ -18,7 +18,7 @@ updates:
       prefix: "chore(deps)"
 
   - package-ecosystem: nuget
-    directory: "/tests/SaaFarr.AI.Prompt.Tests"
+    directory: "/tests/Mima.AI.Prompt.Tests"
     schedule:
       interval: weekly
       day: monday

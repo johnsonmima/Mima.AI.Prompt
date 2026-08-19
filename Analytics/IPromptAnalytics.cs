@@ -1,6 +1,6 @@
-using SaaFarr.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Interfaces;
 
-namespace SaaFarr.AI.Prompt.Analytics;
+namespace Mima.AI.Prompt.Analytics;
 
 /// <summary>
 /// Interface for prompt analytics and telemetry.

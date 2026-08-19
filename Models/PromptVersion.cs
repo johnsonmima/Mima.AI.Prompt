@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Models;
+namespace Mima.AI.Prompt.Models;
 
 /// <summary>
 /// Represents a semantic version for prompts, messages, and templates.
@@ -25,9 +25,9 @@ namespace SaaFarr.AI.Prompt.Models;
 /// <code>
 /// var v1 = PromptVersion.Create(1, 0, 0);
 /// var v2 = PromptVersion.Parse("2.1.0-beta+build.123");
-/// 
+///
 /// if (v2 > v1) { /* migrate prompt */ }
-/// 
+///
 /// var template = SystemTemplate.Create("You are helpful.")
 ///     .WithVersion(PromptVersion.Create(1, 0, 0));
 /// </code>

@@ -1,10 +1,10 @@
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Exceptions;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Roles;
-using SaaFarr.AI.Prompt.Templates;
+using Mima.AI.Prompt.Exceptions;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Roles;
+using Mima.AI.Prompt.Templates;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 public class TemplateTests
 {
@@ -209,11 +209,11 @@ public class TemplateTests
         act.Should().Throw<ArgumentNullException>();
     }
 
-    private sealed class TestTemplate : SaaFarr.AI.Prompt.Templates.MessageTemplate
+    private sealed class TestTemplate : Mima.AI.Prompt.Templates.MessageTemplate
     {
         public TestTemplate(MessageRole role, string content) : base(role, content) { }
 
-        protected override SaaFarr.AI.Prompt.Interfaces.IMessage CreateMessage(string renderedContent) =>
+        protected override Mima.AI.Prompt.Interfaces.IMessage CreateMessage(string renderedContent) =>
             new UserMessage(renderedContent);
     }
 }

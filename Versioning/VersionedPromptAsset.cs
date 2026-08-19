@@ -1,7 +1,7 @@
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Interfaces;
 
-namespace SaaFarr.AI.Prompt.Versioning;
+namespace Mima.AI.Prompt.Versioning;
 
 /// <summary>
 /// A versioned prompt asset that tracks version history and supports migration.
@@ -22,7 +22,7 @@ namespace SaaFarr.AI.Prompt.Versioning;
 ///     .WithDescription("Main customer support prompt")
 ///     .WithAuthor("Johnson Olusegun")
 ///     .WithTags("support", "customer", "v1");
-/// 
+///
 /// // Bump version
 /// var v2 = asset.BumpMinor("Added tone variable");
 /// </code>

@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Roles;
+namespace Mima.AI.Prompt.Roles;
 
 /// <summary>
 /// Abstract base class representing the role of a message in a conversation with an LLM.

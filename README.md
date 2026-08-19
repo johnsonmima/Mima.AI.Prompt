@@ -1,15 +1,29 @@
-# SaaFarr.AI.Prompt
+# Mima.AI.Prompt
 
-[![CI](https://github.com/johnsonmima/SaaFarr.AI.Prompt/actions/workflows/ci.yml/badge.svg)](https://github.com/johnsonmima/SaaFarr.AI.Prompt/actions/workflows/ci.yml)
+[![CI](https://github.com/johnsonmima/Mima.AI.Prompt/actions/workflows/ci.yml/badge.svg)](https://github.com/johnsonmima/Mima.AI.Prompt/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![NuGet](https://img.shields.io/nuget/v/SaaFarr.AI.Prompt.svg)](https://www.nuget.org/packages/SaaFarr.AI.Prompt)
+[![NuGet](https://img.shields.io/nuget/v/Mima.AI.Prompt.svg)](https://www.nuget.org/packages/Mima.AI.Prompt)
 
-A strongly typed, fluent prompt engineering library for .NET applications. Build, validate, and render prompts as first-class software assets — including thin agent sugar (`AgentSpec` / `AgentCrew`) without owning model HTTP or tool runtimes.
+A strongly typed, fluent **prompt engineering** library for .NET. Build, validate, serialize, and map prompts to provider JSON.
 
-**Repository:** https://github.com/johnsonmima/SaaFarr.AI.Prompt  
-**Agents guide:** [AGENT.md](AGENT.md)
+**This package does not call models or run tools.** `AgentSpec` / `AgentCrew` are prompt builders. Pair them with your own HTTP client, OpenAI/Anthropic SDK, or `Microsoft.Extensions.AI`.
 
-## Why SaaFarr.AI.Prompt?
+**Repository:** https://github.com/johnsonmima/Mima.AI.Prompt  
+**Agent-shaped prompts:** [AGENT.md](AGENT.md)
+
+## What this is (and is not)
+
+| This library **does** | This library **does not** |
+|---|---|
+| Typed messages, templates, `{{variables}}`, validation, versioning | HTTP / SDK calls to OpenAI, Anthropic, Ollama, Azure |
+| `PromptBuilder` and `AgentSpec` → a `Prompt` you can test and serialize | An agent loop (`RunAsync` that talks to a model) |
+| Format adapters (`ToJson`) for chat `messages` (+ `response_format` when set) | Emit a provider `tools` / `functions` array |
+| Store `ToolCall` / `ToolMessage` in the transcript | Execute C# tools or register delegates |
+| Fold tool **names** into system text (`WithTools`) | Bind those names to methods |
+
+If you want Semantic Kernel / LangChain-style “install and run an agent,” this is the wrong package. If you want prompts as domain objects and you already own the wire, this is the right one.
+
+## Why Mima.AI.Prompt?
 
 Most prompt libraries treat prompts as strings. This works for small projects, but quickly becomes unmanageable:
 
@@ -19,20 +33,20 @@ Most prompt libraries treat prompts as strings. This works for small projects, b
 - Prompts cannot be versioned or tested
 - Sharing prompts across projects is painful
 
-**SaaFarr.AI.Prompt** treats prompts as structured, reusable objects. Just as ASP.NET treats routes as objects and EF treats tables as models, this library treats prompts as domain objects with validation, templates, and composition.
+**Mima.AI.Prompt** treats prompts as structured, reusable objects. Just as ASP.NET treats routes as objects and EF treats tables as models, this library treats prompts as domain objects with validation, templates, and composition.
 
 ## Installation
 
 ```bash
-dotnet add package SaaFarr.AI.Prompt
+dotnet add package Mima.AI.Prompt
 ```
 
 ## Quick Start
 
 ```csharp
-using SaaFarr.AI.Prompt.Builder;
-using SaaFarr.AI.Prompt.Catalog;
-using SaaFarr.AI.Prompt.Agents;
+using Mima.AI.Prompt.Builder;
+using Mima.AI.Prompt.Catalog;
+using Mima.AI.Prompt.Agents;
 
 // Simple prompt
 var prompt = PromptBuilder
@@ -68,7 +82,7 @@ var agentPrompt = AgentSpec.Create("helper")
 Everything starts with messages. A message represents a single unit of communication sent to an LLM.
 
 ```csharp
-using SaaFarr.AI.Prompt.Messages;
+using Mima.AI.Prompt.Messages;
 
 var system = SystemMessage.Create("You are a helpful assistant.");
 var user = UserMessage.Create("How do I read a file in C#?");
@@ -93,10 +107,10 @@ Every message is parts-first. `Parts` is the body; `Content` is the concatenated
 #### 1) Multimodal user input (text + image / file)
 
 ```csharp
-using SaaFarr.AI.Prompt.Builder;
-using SaaFarr.AI.Prompt.Content;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
+using Mima.AI.Prompt.Builder;
+using Mima.AI.Prompt.Content;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
 
 // Shortcut: text + image URL
 var vision = PromptBuilder.Create()
@@ -128,7 +142,7 @@ The assistant **asks** for tools via `ToolCall`; the tool **answers** via `ToolM
 You own the tool’s parameter schema, C# implementation, and return JSON. This library only stores the transcript (`ToolCall` + `ToolMessage`). Details: [AGENT.md — tool loop](AGENT.md#tool-using-agent-step-by-step).
 
 ```csharp
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Models;
 
 var weather = PromptBuilder.Create()
     .AddSystem("You can call tools when needed.")
@@ -175,7 +189,7 @@ OpenAI adapter **omits** reasoning/thinking from the wire payload by default and
 #### 4) Citations, speaker name, and cache control
 
 ```csharp
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Models;
 
 var grounded = AssistantMessage.CreateDetailed(
     content: "Paris is the capital of France.",
@@ -230,7 +244,7 @@ var jsonPrompt = PromptBuilder.Create()
     .Build();
 
 // OpenAI adapter maps this to response_format in ToJson / ToProviderFormat
-var openAi = new SaaFarr.AI.Prompt.Providers.OpenAiAdapter();
+var openAi = new Mima.AI.Prompt.Providers.OpenAiAdapter();
 string payload = openAi.ToJson(jsonPrompt);
 ```
 
@@ -260,9 +274,9 @@ Typical loop:
 **Basic observation turn** (what the model sees):
 
 ```csharp
-using SaaFarr.AI.Prompt.Content;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
+using Mima.AI.Prompt.Content;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
 
 // Goal + current frame. Action may be omitted on the first turn
 // (the model will invent the next ComputerActionPart in its reply).
@@ -328,7 +342,7 @@ More detail and multi-turn sketches: [AGENT.md — Computer-use agents](AGENT.md
 `PromptSerializer` round-trips parts, tool calls, annotations, cache controls, names, and response format:
 
 ```csharp
-using SaaFarr.AI.Prompt.Serialization;
+using Mima.AI.Prompt.Serialization;
 
 var serializer = new PromptSerializer();
 string json = serializer.Serialize(vision);
@@ -374,10 +388,10 @@ These mirror the scenarios covered by `EndToEndUsageTests` in the test project.
 #### RAG-style document Q&A
 
 ```csharp
-using SaaFarr.AI.Prompt.Builder;
-using SaaFarr.AI.Prompt.Catalog;
-using SaaFarr.AI.Prompt.Content;
-using SaaFarr.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Builder;
+using Mima.AI.Prompt.Catalog;
+using Mima.AI.Prompt.Content;
+using Mima.AI.Prompt.Interfaces;
 
 // Option A: catalog template with retrieved chunks inlined as text
 var rag = PromptBuilder
@@ -400,9 +414,9 @@ var withFile = PromptBuilder.Create()
 #### Build → validate → provider JSON → serialize
 
 ```csharp
-using SaaFarr.AI.Prompt.Providers;
-using SaaFarr.AI.Prompt.Serialization;
-using SaaFarr.AI.Prompt.Validation;
+using Mima.AI.Prompt.Providers;
+using Mima.AI.Prompt.Serialization;
+using Mima.AI.Prompt.Validation;
 
 var prompt = PromptBuilder.Create()
     .AddSystem("You are concise.")
@@ -458,9 +472,9 @@ var recent = conversation.ToPromptWithWindow(2);    // system + last 2 turns
 Built-in roles are a closed, provider-aligned set. Invent additional roles with `MessageRole.Custom` — they work in the domain model and serialize by name. Provider adapters **warn** when custom roles are present (many APIs only accept system/user/assistant/tool) but still pass the name through.
 
 ```csharp
-using SaaFarr.AI.Prompt.Roles;
-using SaaFarr.AI.Prompt.Builder;
-using SaaFarr.AI.Prompt.Messages;
+using Mima.AI.Prompt.Roles;
+using Mima.AI.Prompt.Builder;
+using Mima.AI.Prompt.Messages;
 
 // Built-in (wire-safe for major providers)
 MessageRole role = MessageRole.System;    // Highest priority - defines AI behavior
@@ -496,7 +510,7 @@ Personas like “teacher” or “reviewer” usually belong in **system prompt 
 Templates make messages reusable. Use `{{variableName}}` placeholders:
 
 ```csharp
-using SaaFarr.AI.Prompt.Templates;
+using Mima.AI.Prompt.Templates;
 
 var template = SystemTemplate.Create("""
     You are a {{profession}}.
@@ -527,7 +541,7 @@ var message = template.Render(new
 The fluent builder composes messages into complete prompts:
 
 ```csharp
-using SaaFarr.AI.Prompt.Builder;
+using Mima.AI.Prompt.Builder;
 
 var prompt = PromptBuilder.Create()
     .AddSystem("You are a senior code reviewer.")
@@ -561,7 +575,7 @@ var prompt = PromptBuilder
 For ongoing chat interactions:
 
 ```csharp
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Models;
 
 var conversation = Conversation.Create("Coding Help")
     .WithSystem("You are a helpful coding assistant.")
@@ -583,7 +597,7 @@ var prompt = conversation.ToPromptWithWindow(10); // Last 10 messages
 Define what the AI must and must not do:
 
 ```csharp
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Models;
 
 var constraints = PromptConstraints.Create()
     .MaxWords(200)
@@ -630,7 +644,7 @@ var yamlSchema = OutputFormat.YamlWithSchema("""
 Validate prompts before sending:
 
 ```csharp
-using SaaFarr.AI.Prompt.Validation;
+using Mima.AI.Prompt.Validation;
 
 var validator = new PromptValidator();
 var report = validator.Validate(prompt);
@@ -647,7 +661,7 @@ if (report.HasWarnings)
 Save and load prompts:
 
 ```csharp
-using SaaFarr.AI.Prompt.Serialization;
+using Mima.AI.Prompt.Serialization;
 
 var serializer = new PromptSerializer();
 
@@ -665,7 +679,7 @@ var prompt = serializer.DeserializePrompt(json);
 Convert prompts to provider-specific formats:
 
 ```csharp
-using SaaFarr.AI.Prompt.Rendering;
+using Mima.AI.Prompt.Rendering;
 
 var renderer = new GenericPromptRenderer();
 string output = renderer.Render(prompt);
@@ -681,7 +695,7 @@ string output = renderer.Render(prompt);
 The chain does **not** call the model or pipe outputs for you. Your host runs each step and feeds results into the next (e.g. fill `{{outline}}` / `{{draft}}`).
 
 ```csharp
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Models;
 
 var chain = PromptChain.Create("Document Generation")
     .Add(PromptBuilder.Quick("You are a planner.", "Create an outline for: {{topic}}"))
@@ -738,17 +752,17 @@ Common request patterns:
 | `UserTemplates.ChainOfThought` | question | Step-by-step reasoning |
 | `UserTemplates.Compare` | optionA, optionB, useCase | Comparison |
 
-## Building agents
+## Building agents (prompt sugar, not a runtime)
 
-**An agent is just a prompt** — instructions, memory, and tool turns packed into a `Prompt`.  
-This package builds that prompt. **Your app** calls the model, runs tools, and decides when to stop.
+**An agent here is a prompt** — instructions, memory, and tool turns packed into a `Prompt`.  
+This package builds that prompt. **Your app** calls the model, runs tools, and decides when to stop. See [What this is (and is not)](#what-this-is-and-is-not).
 
 Full walkthrough (step-by-step tool loop, crews, host hooks): **[AGENT.md](AGENT.md)**.
 
 ### 1. Define a simple agent
 
 ```csharp
-using SaaFarr.AI.Prompt.Agents;
+using Mima.AI.Prompt.Agents;
 
 var agent = AgentSpec.Create("helper")
     .WithInstructions("You are a concise assistant. Prefer short answers.");
@@ -782,10 +796,10 @@ Without advertising names (via `WithTools`, a catalog, or the SDK `tools` list),
 **Who decides vs who runs:** the model never executes C#. Call 1 sends schemas so the model can **choose** `name` + `arguments` (`tool_calls` JSON). Your app **runs** the matching method, then Call 2 sends those results as context so the model can write the sentence. If your app already fetched the facts (RAG), skip `tools` / `tool_calls` and put the results in the prompt. Full write-up: [AGENT.md — How the model decides what to run](AGENT.md#how-the-model-decides-what-to-run--and-how-it-actually-runs).
 
 ```csharp
-using SaaFarr.AI.Prompt.Agents;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Providers;
+using Mima.AI.Prompt.Agents;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Providers;
 
 var conversation = Conversation.Create("weather-session");
 
@@ -887,7 +901,7 @@ Each layer depends only on the one below it. The builder composes but does not c
 ## Testing
 
 ```bash
-dotnet test SaaFarr.AI.Prompt.sln -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+dotnet test Mima.AI.Prompt.sln -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
 ```
 
 CI enforces ≥ 95% line coverage on the library assembly.
@@ -908,7 +922,7 @@ CI enforces ≥ 95% line coverage on the library assembly.
 ## Roadmap
 
 - Optional separate packages for HTTP client SDKs (keep in-box format adapters)
-- Grow agent sugar into `SaaFarr.AI.Agents` if the in-box surface expands
+- Grow agent sugar into `Mima.AI.Agents` if the in-box surface expands
 - Wire `PromptConstraints` / `OutputFormat` into `PromptBuilder`
 - Full SemVer pre-release comparison for `PromptVersion`
 - Concrete `IPromptLocalizer` implementations

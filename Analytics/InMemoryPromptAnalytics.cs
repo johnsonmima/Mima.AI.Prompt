@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
-using SaaFarr.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Interfaces;
 
-namespace SaaFarr.AI.Prompt.Analytics;
+namespace Mima.AI.Prompt.Analytics;
 
 /// <summary>
 /// In-memory prompt analytics implementation.

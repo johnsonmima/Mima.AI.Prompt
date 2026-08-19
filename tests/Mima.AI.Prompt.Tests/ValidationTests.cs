@@ -1,11 +1,11 @@
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
-using SaaFarr.AI.Prompt.Validation;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
+using Mima.AI.Prompt.Validation;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 public class ValidationTests
 {

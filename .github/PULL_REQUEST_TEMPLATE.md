@@ -14,13 +14,13 @@
 
 ### Test plan
 
-- [ ] `dotnet test SaaFarr.AI.Prompt.sln -c Release` passes locally
+- [ ] `dotnet test Mima.AI.Prompt.sln -c Release` passes locally
 - [ ] New/changed public APIs have unit tests
 - [ ] Coverage still meets CI threshold (≥ 95% line)
 
 ### Checklist
 
-- [ ] Namespaces / package id remain `SaaFarr.AI.Prompt`
+- [ ] Namespaces / package id remain `Mima.AI.Prompt`
 - [ ] `CHANGELOG.md` updated under `[Unreleased]` (if user-facing)
 - [ ] XML docs added for new public members
 - [ ] No secrets or personal paths committed

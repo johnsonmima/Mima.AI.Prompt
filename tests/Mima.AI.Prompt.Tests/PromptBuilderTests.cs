@@ -1,12 +1,12 @@
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Builder;
-using SaaFarr.AI.Prompt.Exceptions;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
-using SaaFarr.AI.Prompt.Templates;
+using Mima.AI.Prompt.Builder;
+using Mima.AI.Prompt.Exceptions;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
+using Mima.AI.Prompt.Templates;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 public class PromptBuilderTests
 {
@@ -32,7 +32,7 @@ public class PromptBuilderTests
     [Fact]
     public void Use_Template_Null_Throws()
     {
-        var act = () => PromptBuilder.Use((SaaFarr.AI.Prompt.Interfaces.IMessageTemplate)null!);
+        var act = () => PromptBuilder.Use((Mima.AI.Prompt.Interfaces.IMessageTemplate)null!);
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -48,7 +48,7 @@ public class PromptBuilderTests
     [Fact]
     public void Use_Message_Null_Throws()
     {
-        var act = () => PromptBuilder.Use((SaaFarr.AI.Prompt.Interfaces.IMessage)null!);
+        var act = () => PromptBuilder.Use((Mima.AI.Prompt.Interfaces.IMessage)null!);
         act.Should().Throw<ArgumentNullException>();
     }
 

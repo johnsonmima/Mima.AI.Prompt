@@ -1,14 +1,15 @@
 # Open-source project files — why each exists
 
-This repository is public at <https://github.com/johnsonmima/SaaFarr.AI.Prompt>.
+This repository is public at <https://github.com/johnsonmima/Mima.AI.Prompt>.
 The files below are the standard open-source “kit” for a .NET NuGet library.
 Each entry explains **what** the file is and **why** it is required or strongly recommended.
 
 | File / folder | Why it is needed |
 | --------------- | ------------------ |
 | `LICENSE` (MIT) | Legal permission for others to use, modify, and redistribute. Without a license, default copyright applies and many orgs **cannot** consume the package. |
-| `README.md` | First page for GitHub and NuGet. Explains install, quick start, concepts, and agents overview. |
-| `AGENT.md` | Agents-as-prompts guide: `AgentSpec` / `AgentCrew`, host hooks, and loop sketches. Linked from README. |
+| `README.md` | First page for GitHub and NuGet. Scope table (what ships vs what the host owns), install, quick start. |
+| `AGENT.md` | Agent-**shaped prompts** only (`AgentSpec` build). No runtime, no crew-as-custom-roles. |
+| `FUTURE.md` | Backlog of APIs **removed** from the current usable cut (agents runtime, extra parts, stubs). Not product docs until restored. |
 | `CHANGELOG.md` | SemVer-friendly history so consumers know what broke/changed between versions (Keep a Changelog). |
 | `CONTRIBUTING.md` | Teaches strangers how to build, test, branch, and open PRs — reduces maintainer load. |
 | `PR.md` | Ordered pull request procedure: update `main`, branch names, CI triggers, version/package metadata, merge, tag. |
@@ -17,8 +18,8 @@ Each entry explains **what** the file is and **why** it is required or strongly 
 | `GITHUB.md` | Maintainer guide for the public repository: Actions, CI jobs, NuGet Trusted Publishing, squash merge, and branch protection. |
 | `.gitignore` | Keeps `bin/`, `obj/`, coverage, secrets, IDE junk, and local `CODE_REVIEW.md` out of git. |
 | `.editorconfig` | Shared formatting so multi-contributor PRs are not drowned in whitespace noise. |
-| `SaaFarr.AI.Prompt.sln` | Single entry point for CI and contributors (`dotnet test` the solution). |
-| `tests/SaaFarr.AI.Prompt.Tests/` | Proves behavior; required for safe open-source change. CI enforces coverage. |
+| `Mima.AI.Prompt.sln` | Single entry point for CI and contributors (`dotnet test` the solution). |
+| `tests/Mima.AI.Prompt.Tests/` | Proves behavior; required for safe open-source change. CI enforces coverage. |
 | `.github/workflows/ci.yml` | Automated build/test/pack on every PR — the trust signal for outsiders. |
 | `.github/workflows/release.yml` | Tag-based NuGet publish so releases are auditable and repeatable. |
 | `.github/dependabot.yml` | Automated dependency update PRs (NuGet + Actions). |
@@ -39,4 +40,4 @@ Each entry explains **what** the file is and **why** it is required or strongly 
 
 ## Naming consistency
 
-Everywhere (namespaces, `PackageId`, docs, badges) use **`SaaFarr.AI.Prompt`**, matching the GitHub repository name — not the older `SaaFarr.Prompt` label.
+Everywhere (namespaces, `PackageId`, docs, badges) use **`Mima.AI.Prompt`**, matching the GitHub repository name.

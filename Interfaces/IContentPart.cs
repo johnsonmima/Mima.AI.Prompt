@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Interfaces;
+namespace Mima.AI.Prompt.Interfaces;
 
 /// <summary>
 /// A single unit of message content (text, image, file, thinking, computer-use, etc.).

@@ -18,7 +18,7 @@ Open-source packages are used in production systems. A clear security policy tel
 Please report privately via one of:
 
 1. **GitHub Security Advisories** (preferred):  
-   <https://github.com/johnsonmima/SaaFarr.AI.Prompt/security/advisories/new>
+   <https://github.com/johnsonmima/Mima.AI.Prompt/security/advisories/new>
 2. Email the maintainer listed in the repository profile / NuGet package authors.
 
 Include:

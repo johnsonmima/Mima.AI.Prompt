@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Models;
+namespace Mima.AI.Prompt.Models;
 
 /// <summary>
 /// Defines structured output format constraints for prompts.

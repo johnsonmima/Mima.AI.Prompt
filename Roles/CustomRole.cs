@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Roles;
+namespace Mima.AI.Prompt.Roles;
 
 /// <summary>
 /// A developer-invented message role that is not part of the built-in LLM wire vocabulary.

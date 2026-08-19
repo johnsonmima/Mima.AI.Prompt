@@ -157,7 +157,7 @@
           "xunit.extensibility.core": "[2.9.3]"
         }
       },
-      "saafarr.ai.prompt": {
+      "Mima.AI.Prompt": {
         "type": "Project"
       }
     }

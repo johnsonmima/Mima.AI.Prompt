@@ -1,15 +1,15 @@
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Builder;
-using SaaFarr.AI.Prompt.Content;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Providers;
-using SaaFarr.AI.Prompt.Roles;
-using SaaFarr.AI.Prompt.Serialization;
-using SaaFarr.AI.Prompt.Validation;
+using Mima.AI.Prompt.Builder;
+using Mima.AI.Prompt.Content;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Providers;
+using Mima.AI.Prompt.Roles;
+using Mima.AI.Prompt.Serialization;
+using Mima.AI.Prompt.Validation;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 /// <summary>
 /// Usage-oriented coverage for multimodal parts, tool calls, reasoning, refusal,

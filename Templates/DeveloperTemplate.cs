@@ -1,9 +1,9 @@
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
 
-namespace SaaFarr.AI.Prompt.Templates;
+namespace Mima.AI.Prompt.Templates;
 
 /// <summary>
 /// A reusable developer message template with variable support.

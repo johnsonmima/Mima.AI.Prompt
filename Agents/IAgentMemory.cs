@@ -1,6 +1,6 @@
-using SaaFarr.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Interfaces;
 
-namespace SaaFarr.AI.Prompt.Agents;
+namespace Mima.AI.Prompt.Agents;
 
 /// <summary>
 /// Host-provided memory beyond in-process <see cref="Models.Conversation"/>.

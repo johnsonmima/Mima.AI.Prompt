@@ -1,4 +1,4 @@
-# .gitignore for SaaFarr.AI.Prompt
+# .gitignore for Mima.AI.Prompt
 # Why: keeps build artifacts, secrets, IDE noise, and local-only files out of git
 # so the public history stays clean and cloneable for open-source contributors.
 

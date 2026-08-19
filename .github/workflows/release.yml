@@ -1,4 +1,4 @@
-# Release / Publish — SaaFarr.AI.Prompt
+# Release / Publish — Mima.AI.Prompt
 #
 # Why: open-source consumers install from nuget.org. Publishing must be
 # automated, tagged, and auditable — never a manual `dotnet nuget push`
@@ -58,28 +58,32 @@ jobs:
           cache: true
           cache-dependency-path: |
             packages.lock.json
-            tests/SaaFarr.AI.Prompt.Tests/packages.lock.json
+            tests/Mima.AI.Prompt.Tests/packages.lock.json
 
       # Stage step: verify the tagged commit still builds
       - name: Restore and build
         run: |
-          dotnet restore SaaFarr.AI.Prompt.sln --locked-mode
-          dotnet build SaaFarr.AI.Prompt.sln -c Release --no-restore
+          dotnet restore Mima.AI.Prompt.sln --locked-mode
+          dotnet build Mima.AI.Prompt.sln -c Release --no-restore
 
-      # Stage step: never publish a package that fails its own tests
+      # Stage step: never publish a package that fails its own tests.
+      # Coverlet instruments at compile time — do not use --no-build here.
       - name: Test
         run: >
-          dotnet test tests/SaaFarr.AI.Prompt.Tests/SaaFarr.AI.Prompt.Tests.csproj
+          dotnet test tests/Mima.AI.Prompt.Tests/Mima.AI.Prompt.Tests.csproj
           -c Release
-          --no-build
+          --no-restore
           /p:CollectCoverage=true
+          /p:CoverletOutputFormat=cobertura
+          /p:Include=[Mima.AI.Prompt]*
           /p:Threshold=95
           /p:ThresholdType=line
+          /p:ThresholdStat=total
 
       # Stage step: create nupkg + snupkg (symbols for debugger SourceLink)
       - name: Pack
         run: >
-          dotnet pack SaaFarr.AI.Prompt.csproj
+          dotnet pack Mima.AI.Prompt.csproj
           -c Release
           --no-build
           -o ./artifacts

@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Interfaces;
+namespace Mima.AI.Prompt.Interfaces;
 
 /// <summary>
 /// Renders a prompt into a provider-specific format.
@@ -6,7 +6,7 @@ namespace SaaFarr.AI.Prompt.Interfaces;
 /// </summary>
 /// <remarks>
 /// The core library ships with a generic JSON renderer.
-/// Provider-specific packages (SaaFarr.AI.Prompt.OpenAI, SaaFarr.AI.Prompt.Anthropic, etc.) 
+/// Provider-specific packages (Mima.AI.Prompt.OpenAI, Mima.AI.Prompt.Anthropic, etc.)
 /// provide their own implementations.
 /// </remarks>
 public interface IPromptRenderer

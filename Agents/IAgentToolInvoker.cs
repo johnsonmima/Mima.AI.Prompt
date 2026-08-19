@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Agents;
+namespace Mima.AI.Prompt.Agents;
 
 /// <summary>
 /// Host-provided tool executor. This package never invokes tools;
@@ -8,7 +8,7 @@ public interface IAgentToolInvoker
 {
     /// <summary>Executes a tool by name with JSON arguments and returns a string/JSON result.</summary>
     /// <param name="toolName">
-    /// Tool name from <see cref="SaaFarr.AI.Prompt.Models.ToolCall.Name"/> (for example <c>get_weather</c>).
+    /// Tool name from <see cref="Mima.AI.Prompt.Models.ToolCall.Name"/> (for example <c>get_weather</c>).
     /// <see cref="AgentSpec.WithTools"/> only advertises names in the prompt — this method is where you
     /// switch on <paramref name="toolName"/> and run the matching C# implementation.
     /// </param>

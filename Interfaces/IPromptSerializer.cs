@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Interfaces;
+namespace Mima.AI.Prompt.Interfaces;
 
 /// <summary>
 /// Serializes and deserializes prompts, messages, and templates for persistence.

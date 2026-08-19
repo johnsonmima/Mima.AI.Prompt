@@ -1,12 +1,12 @@
 using System.Text;
-using SaaFarr.AI.Prompt.Builder;
-using SaaFarr.AI.Prompt.Content;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
+using Mima.AI.Prompt.Builder;
+using Mima.AI.Prompt.Content;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
 
-namespace SaaFarr.AI.Prompt.Agents;
+namespace Mima.AI.Prompt.Agents;
 
 /// <summary>
 /// Thin syntactic sugar for agent-shaped prompts.

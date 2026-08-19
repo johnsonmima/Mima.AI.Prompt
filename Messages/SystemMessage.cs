@@ -1,8 +1,8 @@
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
 
-namespace SaaFarr.AI.Prompt.Messages;
+namespace Mima.AI.Prompt.Messages;
 
 /// <summary>
 /// System message — AI identity and permanent rules.

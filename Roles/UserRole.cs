@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Roles;
+namespace Mima.AI.Prompt.Roles;
 
 /// <summary>
 /// User role - represents the human user's input and intent.

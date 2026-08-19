@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Validation;
+namespace Mima.AI.Prompt.Validation;
 
 /// <summary>
 /// The result of prompt validation, containing errors and warnings.

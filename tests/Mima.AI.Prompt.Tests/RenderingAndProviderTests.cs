@@ -1,11 +1,11 @@
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Providers;
-using SaaFarr.AI.Prompt.Rendering;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Providers;
+using Mima.AI.Prompt.Rendering;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 public class RenderingAndProviderTests
 {
@@ -96,11 +96,11 @@ public class RenderingAndProviderTests
         var adapter = new OpenAiAdapter();
         adapter.SupportedRoles.Should().Contain(new[]
         {
-            SaaFarr.AI.Prompt.Roles.MessageRole.System,
-            SaaFarr.AI.Prompt.Roles.MessageRole.User,
-            SaaFarr.AI.Prompt.Roles.MessageRole.Assistant,
-            SaaFarr.AI.Prompt.Roles.MessageRole.Tool,
-            SaaFarr.AI.Prompt.Roles.MessageRole.Function
+            Mima.AI.Prompt.Roles.MessageRole.System,
+            Mima.AI.Prompt.Roles.MessageRole.User,
+            Mima.AI.Prompt.Roles.MessageRole.Assistant,
+            Mima.AI.Prompt.Roles.MessageRole.Tool,
+            Mima.AI.Prompt.Roles.MessageRole.Function
         });
     }
 
@@ -171,8 +171,8 @@ public class RenderingAndProviderTests
     public void AnthropicAdapter_SupportedRoles_ExcludesToolAndFunction()
     {
         var adapter = new AnthropicAdapter();
-        adapter.SupportedRoles.Should().NotContain(SaaFarr.AI.Prompt.Roles.MessageRole.Tool);
-        adapter.SupportedRoles.Should().NotContain(SaaFarr.AI.Prompt.Roles.MessageRole.Function);
+        adapter.SupportedRoles.Should().NotContain(Mima.AI.Prompt.Roles.MessageRole.Tool);
+        adapter.SupportedRoles.Should().NotContain(Mima.AI.Prompt.Roles.MessageRole.Function);
     }
 
     [Fact]
@@ -273,7 +273,7 @@ public class RenderingAndProviderTests
     public void OllamaAdapter_SupportedRoles_ExcludesToolAndFunction()
     {
         var adapter = new OllamaAdapter();
-        adapter.SupportedRoles.Should().NotContain(SaaFarr.AI.Prompt.Roles.MessageRole.Tool);
+        adapter.SupportedRoles.Should().NotContain(Mima.AI.Prompt.Roles.MessageRole.Tool);
     }
 
     [Fact]

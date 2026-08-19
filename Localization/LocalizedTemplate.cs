@@ -1,9 +1,9 @@
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
-using SaaFarr.AI.Prompt.Templates;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
+using Mima.AI.Prompt.Templates;
 
-namespace SaaFarr.AI.Prompt.Localization;
+namespace Mima.AI.Prompt.Localization;
 
 /// <summary>
 /// A template that holds localized versions of its content for multiple locales.

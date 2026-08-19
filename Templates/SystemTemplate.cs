@@ -1,9 +1,9 @@
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
 
-namespace SaaFarr.AI.Prompt.Templates;
+namespace Mima.AI.Prompt.Templates;
 
 /// <summary>
 /// A reusable system message template with variable support.
@@ -16,7 +16,7 @@ namespace SaaFarr.AI.Prompt.Templates;
 ///     Use a {{tone}} tone.
 ///     Limit responses to {{maxWords}} words.
 ///     """);
-/// 
+///
 /// var message = template.Render(new { profession = "Teacher", tone = "Friendly", maxWords = 200 });
 /// </code>
 /// </example>

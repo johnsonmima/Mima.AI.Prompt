@@ -1,7 +1,7 @@
-using SaaFarr.AI.Prompt.Content;
-using SaaFarr.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Content;
+using Mima.AI.Prompt.Interfaces;
 
-namespace SaaFarr.AI.Prompt.Providers;
+namespace Mima.AI.Prompt.Providers;
 
 /// <summary>
 /// Shared content mapping for provider adapters.

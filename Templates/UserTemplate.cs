@@ -1,9 +1,9 @@
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
 
-namespace SaaFarr.AI.Prompt.Templates;
+namespace Mima.AI.Prompt.Templates;
 
 /// <summary>
 /// A reusable user message template with variable support.
@@ -13,10 +13,10 @@ namespace SaaFarr.AI.Prompt.Templates;
 /// <code>
 /// var template = UserTemplate.Create("""
 ///     Summarize the following document in {{style}} style:
-///     
+///
 ///     {{document}}
 ///     """);
-/// 
+///
 /// var message = template.Render(new { style = "bullet points", document = articleText });
 /// </code>
 /// </example>

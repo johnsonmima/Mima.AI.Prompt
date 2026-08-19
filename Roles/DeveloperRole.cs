@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Roles;
+namespace Mima.AI.Prompt.Roles;
 
 /// <summary>
 /// Developer role - sits between system and user, providing additional context or constraints.

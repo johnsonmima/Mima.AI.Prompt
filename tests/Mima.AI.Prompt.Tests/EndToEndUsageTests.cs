@@ -1,18 +1,18 @@
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Agents;
-using SaaFarr.AI.Prompt.Builder;
-using SaaFarr.AI.Prompt.Catalog;
-using SaaFarr.AI.Prompt.Content;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Providers;
-using SaaFarr.AI.Prompt.Rendering;
-using SaaFarr.AI.Prompt.Roles;
-using SaaFarr.AI.Prompt.Serialization;
-using SaaFarr.AI.Prompt.Validation;
+using Mima.AI.Prompt.Agents;
+using Mima.AI.Prompt.Builder;
+using Mima.AI.Prompt.Catalog;
+using Mima.AI.Prompt.Content;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Providers;
+using Mima.AI.Prompt.Rendering;
+using Mima.AI.Prompt.Roles;
+using Mima.AI.Prompt.Serialization;
+using Mima.AI.Prompt.Validation;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 /// <summary>
 /// End-to-end scenarios that mirror README usage samples.

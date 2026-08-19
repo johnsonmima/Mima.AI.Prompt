@@ -1,7 +1,7 @@
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
 
-namespace SaaFarr.AI.Prompt.Interfaces;
+namespace Mima.AI.Prompt.Interfaces;
 
 /// <summary>
 /// Represents a reusable message template with variable placeholders.

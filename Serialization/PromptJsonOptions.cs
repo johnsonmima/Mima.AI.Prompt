@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace SaaFarr.AI.Prompt.Serialization;
+namespace Mima.AI.Prompt.Serialization;
 
 /// <summary>
 /// Shared <see cref="JsonSerializerOptions"/> for adapters, renderers, and persistence.

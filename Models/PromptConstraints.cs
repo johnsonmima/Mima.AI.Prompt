@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Models;
+namespace Mima.AI.Prompt.Models;
 
 /// <summary>
 /// Defines constraints and negative instructions for a prompt.

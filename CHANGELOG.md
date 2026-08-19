@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to SaaFarr.AI.Prompt will be documented in this file.
+All notable changes to Mima.AI.Prompt will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Package naming **SaaFarr.AI.Prompt**; repo URLs → `johnsonmima/SaaFarr.AI.Prompt`
+- README, NuGet `Description`, and AGENT.md now state the product contract up front: prompt composition only (no model HTTP, no tool runtime, no provider `tools` array)
 - `PromptSerializer` always deserializes from `parts` when present (preserves id / name / cache / annotations)
 - Provider adapters emit structured content via shared mapper (not string-only)
 - `FunctionMessage` documented as legacy relative to tools + tool_calls

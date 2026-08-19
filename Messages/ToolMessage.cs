@@ -1,7 +1,7 @@
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
 
-namespace SaaFarr.AI.Prompt.Messages;
+namespace Mima.AI.Prompt.Messages;
 
 /// <summary>Tool result message paired with an assistant <see cref="ToolCall"/> via <see cref="ToolCallId"/>.</summary>
 public sealed class ToolMessage : Message

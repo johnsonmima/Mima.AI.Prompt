@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/tests/SaaFarr.AI.Prompt.Tests/bin/Debug/net10.0/SaaFarr.AI.Prompt.Tests.dll",
+            "program": "${workspaceFolder}/tests/Mima.AI.Prompt.Tests/bin/Debug/net10.0/Mima.AI.Prompt.Tests.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/tests/SaaFarr.AI.Prompt.Tests",
+            "cwd": "${workspaceFolder}/tests/Mima.AI.Prompt.Tests",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
             "stopAtEntry": false

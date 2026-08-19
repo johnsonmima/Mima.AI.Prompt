@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SaaFarr.AI.Prompt.Models;
+namespace Mima.AI.Prompt.Models;
 
 /// <summary>
 /// Immutable metadata associated with a message, template, or prompt.
@@ -9,7 +9,7 @@ namespace SaaFarr.AI.Prompt.Models;
 /// <remarks>
 /// <para>
 /// Metadata turns prompts from throw-away strings into managed software assets.
-/// Version tracking, authorship, and categorization enable teams to maintain 
+/// Version tracking, authorship, and categorization enable teams to maintain
 /// prompt libraries at scale.
 /// </para>
 /// </remarks>
@@ -64,7 +64,7 @@ public sealed class MessageMetadata
     public DateTimeOffset Modified { get; }
 
     /// <summary>
-    /// Gets the minimum compatible version required by consumers. 
+    /// Gets the minimum compatible version required by consumers.
     /// Useful for ensuring prompt consumers can handle this version's features.
     /// </summary>
     [JsonPropertyName("minCompatibleVersion")]

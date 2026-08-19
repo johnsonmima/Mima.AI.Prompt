@@ -1,6 +1,6 @@
-using SaaFarr.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Interfaces;
 
-namespace SaaFarr.AI.Prompt.Providers;
+namespace Mima.AI.Prompt.Providers;
 
 /// <summary>
 /// Interface for provider-specific prompt adapters.

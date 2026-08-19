@@ -1,8 +1,8 @@
 # Pull Request Procedure
 
-This document is the step-by-step guide for preparing, opening, and merging a pull request in SaaFarr.AI.Prompt. Follow it in order. Repository settings and Actions details live in [GITHUB.md](GITHUB.md). Contribution rules live in [CONTRIBUTING.md](CONTRIBUTING.md).
+This document is the step-by-step guide for preparing, opening, and merging a pull request in Mima.AI.Prompt. Follow it in order. Repository settings and Actions details live in [GITHUB.md](GITHUB.md). Contribution rules live in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-There is no separate `.nuspec` file. The NuGet manifest is generated at pack time from `SaaFarr.AI.Prompt.csproj` (`PackageId`, `Version`, `PackageReleaseNotes`, README, LICENSE). Version and package notes are updated in that project file.
+There is no separate `.nuspec` file. The NuGet manifest is generated at pack time from `Mima.AI.Prompt.csproj` (`PackageId`, `Version`, `PackageReleaseNotes`, README, LICENSE). Version and package notes are updated in that project file.
 
 ## Contents
 
@@ -64,7 +64,7 @@ Target of the pull request:
 
 Do not branch from a stale local `main`. Fetch remotes first, check out `main`, and fast-forward it to `origin/main`. Then create the working branch.
 
-If you have a fork, `origin` is your fork and `upstream` is `johnsonmima/SaaFarr.AI.Prompt`. Maintainers with write access often have `origin` pointing at `johnsonmima/SaaFarr.AI.Prompt`.
+If you have a fork, `origin` is your fork and `upstream` is `johnsonmima/Mima.AI.Prompt`. Maintainers with write access often have `origin` pointing at `johnsonmima/Mima.AI.Prompt`.
 
 Maintainer (write access):
 
@@ -77,7 +77,7 @@ git pull --ff-only origin main
 Contributor (fork). Add `upstream` once if it is missing:
 
 ```bash
-git remote add upstream https://github.com/johnsonmima/SaaFarr.AI.Prompt.git
+git remote add upstream https://github.com/johnsonmima/Mima.AI.Prompt.git
 git fetch upstream
 git checkout main
 git merge --ff-only upstream/main
@@ -125,10 +125,10 @@ Keep the pull request to one concern. Do not mix a public API change, a CI rewri
 While editing:
 
 - New public members need XML documentation.
-- New or changed behavior needs tests under `tests/SaaFarr.AI.Prompt.Tests/`. Prefer cases that match README or [AGENT.md](AGENT.md) in `EndToEndUsageTests` or `AgentTests` when those files are the right place.
-- Namespaces and package id stay `SaaFarr.AI.Prompt`.
+- New or changed behavior needs tests under `tests/Mima.AI.Prompt.Tests/`. Prefer cases that match README or [AGENT.md](AGENT.md) in `EndToEndUsageTests` or `AgentTests` when those files are the right place.
+- Namespaces and package id stay `Mima.AI.Prompt`.
 - Do not commit secrets, `.env` files, or personal paths.
-- If you change a `PackageReference`, run `dotnet restore SaaFarr.AI.Prompt.sln` and commit both `packages.lock.json` and `tests/SaaFarr.AI.Prompt.Tests/packages.lock.json`. CI restore uses `--locked-mode` and will fail if the lock files are stale.
+- If you change a `PackageReference`, run `dotnet restore Mima.AI.Prompt.sln` and commit both `packages.lock.json` and `tests/Mima.AI.Prompt.Tests/packages.lock.json`. CI restore uses `--locked-mode` and will fail if the lock files are stale.
 
 ---
 
@@ -144,7 +144,7 @@ A **release** pull request (section 7 and 13) moves `[Unreleased]` items into a 
 
 ## 7. Version and package metadata
 
-SDK-style packing reads `SaaFarr.AI.Prompt.csproj`. There is no hand-maintained `.nuspec`. When you change version or release notes, edit these properties together:
+SDK-style packing reads `Mima.AI.Prompt.csproj`. There is no hand-maintained `.nuspec`. When you change version or release notes, edit these properties together:
 
 - `<Version>` — NuGet package version (SemVer). This is what nuget.org and `dotnet add package` see.
 - `<AssemblyVersion>` — four-part assembly version, for example `1.1.0.0`.
@@ -162,10 +162,10 @@ Do **not** bump `<Version>` on every feature or fix pull request. Development co
 On a release pull request:
 
 1. Choose the next SemVer from the Unreleased notes.
-2. Set `<Version>`, `<AssemblyVersion>`, and `<FileVersion>` in `SaaFarr.AI.Prompt.csproj`.
+2. Set `<Version>`, `<AssemblyVersion>`, and `<FileVersion>` in `Mima.AI.Prompt.csproj`.
 3. Set `<PackageReleaseNotes>` to a concise summary of that version (drawn from CHANGELOG).
 4. Move `[Unreleased]` entries to `## [x.y.z] - YYYY-MM-DD` in `CHANGELOG.md`.
-5. Keep `<PackageId>` as `SaaFarr.AI.Prompt`. Do not rename the package in a routine PR.
+5. Keep `<PackageId>` as `Mima.AI.Prompt`. Do not rename the package in a routine PR.
 
 CI **Pack** uses whatever `<Version>` is in the csproj on that commit. It uploads a `.nupkg` artifact for inspection. It does not push to nuget.org.
 
@@ -176,18 +176,24 @@ CI **Pack** uses whatever `<Version>` is in the csproj on that commit. It upload
 From the repository root:
 
 ```bash
-dotnet restore SaaFarr.AI.Prompt.sln --locked-mode
-dotnet build SaaFarr.AI.Prompt.sln -c Release --no-restore
-dotnet test SaaFarr.AI.Prompt.sln -c Release --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Include=[SaaFarr.AI.Prompt]* /p:Threshold=95 /p:ThresholdType=line /p:ThresholdStat=total
+dotnet restore Mima.AI.Prompt.sln --locked-mode
+dotnet build Mima.AI.Prompt.sln -c Release --no-restore
+dotnet test Mima.AI.Prompt.sln -c Release --no-restore \
+  '/p:CollectCoverage=true' \
+  '/p:CoverletOutputFormat=cobertura' \
+  '/p:Include=[Mima.AI.Prompt]*' \
+  '/p:Threshold=95' \
+  '/p:ThresholdType=line' \
+  '/p:ThresholdStat=total'
 ```
 
 If you changed package metadata and want to inspect the nupkg:
 
 ```bash
-dotnet pack SaaFarr.AI.Prompt.csproj -c Release --no-restore -o ./artifacts /p:ContinuousIntegrationBuild=true
+dotnet pack Mima.AI.Prompt.csproj -c Release --no-restore -o ./artifacts /p:ContinuousIntegrationBuild=true
 ```
 
-CI will fail the pull request if tests fail, if line coverage of `SaaFarr.AI.Prompt` is below 95 percent, if restore is not locked, or if `dotnet pack` fails.
+CI will fail the pull request if tests fail, if line coverage of `Mima.AI.Prompt` is below 95 percent, if restore is not locked, or if `dotnet pack` fails.
 
 ---
 
@@ -201,7 +207,7 @@ Push the **working branch**, not `main`:
 git push -u origin HEAD
 ```
 
-On a fork, `origin` is your fork. Maintainers push the feature branch to `johnsonmima/SaaFarr.AI.Prompt`.
+On a fork, `origin` is your fork. Maintainers push the feature branch to `johnsonmima/Mima.AI.Prompt`.
 
 ---
 
@@ -225,6 +231,8 @@ If GitHub shows that the branch is behind `main`, use **Update branch** on the p
 ## 11. Wait for CI
 
 On the pull request, **Checks** (or **Actions**) must show **Build**, **Test**, and **Pack** green. Those names are required by branch protection. Do not merge while they are pending or red.
+
+Coverage is posted as a pull request comment (totals plus per-file rates) and on the **Test** job summary. The Cobertura XML is also the `coverage-report` artifact. If line coverage of `Mima.AI.Prompt` is below 95 percent, Test is red even when every xUnit test passed.
 
 A first-time contributor’s workflow may sit on **Waiting for approval**. A maintainer must open the pull request **Actions** tab and approve the run. See [GITHUB.md](GITHUB.md).
 

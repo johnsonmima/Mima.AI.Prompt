@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a defect in SaaFarr.AI.Prompt
+description: Report a defect in Mima.AI.Prompt
 title: "[Bug]: "
 labels: ["bug"]
 body:
@@ -18,7 +18,7 @@ body:
     id: repro
     attributes:
       label: Reproduction
-      description: Minimal C# sample using SaaFarr.AI.Prompt.*
+      description: Minimal C# sample using Mima.AI.Prompt.*
       render: csharp
     validations:
       required: true

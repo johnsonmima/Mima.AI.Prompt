@@ -1,10 +1,10 @@
 # GitHub Repository Guide
 
-This document describes how the public GitHub repository for SaaFarr.AI.Prompt is configured and operated. It is the maintainer and contributor reference for pull requests, GitHub Actions, branch protection, and publishing the NuGet package.
+This document describes how the public GitHub repository for Mima.AI.Prompt is configured and operated. It is the maintainer and contributor reference for pull requests, GitHub Actions, branch protection, and publishing the NuGet package.
 
-Repository: [https://github.com/johnsonmima/SaaFarr.AI.Prompt](https://github.com/johnsonmima/SaaFarr.AI.Prompt)
+Repository: [https://github.com/johnsonmima/Mima.AI.Prompt](https://github.com/johnsonmima/Mima.AI.Prompt)
 
-Package identifier: `SaaFarr.AI.Prompt`
+Package identifier: `Mima.AI.Prompt`
 
 Workflow files: `.github/workflows/ci.yml` and `.github/workflows/release.yml`
 
@@ -18,22 +18,42 @@ Paths in this guide start from the repository home page. Repository configuratio
 
 ## Contents
 
-1. [Setup order](#1-setup-order)
-2. [Repository profile](#2-repository-profile)
-3. [Default branch](#3-default-branch)
-4. [Contribution model](#4-contribution-model)
-5. [GitHub Actions](#5-github-actions)
-6. [NuGet Trusted Publishing](#6-nuget-trusted-publishing)
-7. [Pull request settings](#7-pull-request-settings)
-8. [Branch protection](#8-branch-protection)
-9. [Code review](#9-code-review)
-10. [Security and Dependabot](#10-security-and-dependabot)
-11. [Issues](#11-issues)
-12. [Packages](#12-packages)
-13. [Roles](#13-roles)
-14. [Maintainer setup procedure](#14-maintainer-setup-procedure)
-15. [Troubleshooting](#15-troubleshooting)
-16. [References](#16-references)
+- [GitHub Repository Guide](#github-repository-guide)
+  - [Audience and permissions](#audience-and-permissions)
+  - [Contents](#contents)
+  - [1. Setup order](#1-setup-order)
+  - [2. Repository profile](#2-repository-profile)
+  - [3. Default branch](#3-default-branch)
+  - [4. Contribution model](#4-contribution-model)
+  - [5. GitHub Actions](#5-github-actions)
+    - [5.1 Enable Actions](#51-enable-actions)
+    - [5.2 Verify that CI runs](#52-verify-that-ci-runs)
+    - [5.3 Continuous integration jobs](#53-continuous-integration-jobs)
+      - [Build](#build)
+      - [Test](#test)
+      - [Pack](#pack)
+    - [5.4 Release workflow](#54-release-workflow)
+  - [6. NuGet Trusted Publishing](#6-nuget-trusted-publishing)
+    - [6.1 Register a policy on nuget.org](#61-register-a-policy-on-nugetorg)
+    - [6.2 Store the nuget.org username on GitHub](#62-store-the-nugetorg-username-on-github)
+    - [6.3 Verify a release](#63-verify-a-release)
+    - [6.4 Optional GitHub Environment](#64-optional-github-environment)
+    - [6.5 Why not a long-lived API key](#65-why-not-a-long-lived-api-key)
+  - [7. Pull request settings](#7-pull-request-settings)
+  - [8. Branch protection](#8-branch-protection)
+    - [8.1 Rulesets](#81-rulesets)
+    - [8.2 Classic branch protection](#82-classic-branch-protection)
+  - [9. Code review](#9-code-review)
+  - [10. Security and Dependabot](#10-security-and-dependabot)
+  - [11. Issues](#11-issues)
+  - [12. Packages](#12-packages)
+  - [13. Roles](#13-roles)
+  - [14. Maintainer setup procedure](#14-maintainer-setup-procedure)
+  - [15. Troubleshooting](#15-troubleshooting)
+    - [CI does not start](#ci-does-not-start)
+    - [Pull requests cannot merge](#pull-requests-cannot-merge)
+    - [Release does not publish](#release-does-not-publish)
+  - [16. References](#16-references)
 
 ---
 
@@ -56,11 +76,11 @@ If status checks are required before step 4, the checks dropdown is empty and pu
 
 Navigate to **Settings**, then **General**.
 
-Set the repository name to `SaaFarr.AI.Prompt` so it matches the NuGet package identifier and assembly name.
+Set the repository name to `Mima.AI.Prompt` so it matches the NuGet package identifier and assembly name.
 
 Set the description to a short summary suitable for GitHub and nuget.org discovery, for example: strongly typed fluent prompt engineering library for .NET.
 
-Set the website to `https://github.com/johnsonmima/SaaFarr.AI.Prompt` so it matches `PackageProjectUrl` in the project file.
+Set the website to `https://github.com/johnsonmima/Mima.AI.Prompt` so it matches `PackageProjectUrl` in the project file.
 
 Add topics that aid search, such as `dotnet`, `csharp`, `llm`, `prompt-engineering`, `openai`, `anthropic`, and `nuget`.
 
@@ -112,6 +132,8 @@ Navigate to **Settings**, then **Actions**, then **General**.
 
 Set **Actions permissions** to **Allow all actions and reusable workflows**. The workflows use `actions/checkout`, `actions/setup-dotnet`, `actions/upload-artifact`, and `NuGet/login`. Restricting the repository to local actions only will fail those steps.
 
+The Test job posts a coverage comment on pull requests. That needs `pull-requests: write` on the job (already declared in `ci.yml`) and a token that can comment. Keep **Workflow permissions** as **Read and write permissions**, or keep the default read token and rely on the Test job’s explicit `permissions` block.
+
 Disable **Allow GitHub Actions to create and approve pull requests**. Maintainers merge pull requests. Workflows must not approve their own changes.
 
 Set **Fork pull request workflows from outside collaborators** to **Require approval for first-time contributors**. A first-time fork will wait until a maintainer selects **Approve and run** on that pull request’s Actions tab. This reduces the risk of a first contribution mining secrets or consuming minutes maliciously.
@@ -132,7 +154,7 @@ Open the latest run. The jobs must be named **Build**, **Test**, and **Pack**, m
 
 If no run appears, the workflow file is missing from the default branch, Actions are disabled, or the organization blocks Actions.
 
-The README badge URL is `https://github.com/johnsonmima/SaaFarr.AI.Prompt/actions/workflows/ci.yml/badge.svg`. It reports no status until at least one run exists.
+The README badge URL is `https://github.com/johnsonmima/Mima.AI.Prompt/actions/workflows/ci.yml/badge.svg`. It reports no status until at least one run exists.
 
 On a fork pull request, open **Actions** or **Checks** on the pull request. First-time contributors remain waiting for approval until a maintainer approves the workflow.
 
@@ -142,13 +164,13 @@ The **CI** workflow runs **Build**, then **Test**, then **Pack**. Each job start
 
 #### Build
 
-**Build** is the first gate. It checks out the repository with `fetch-depth: 0` so SourceLink and version metadata can resolve full history. It installs .NET SDK 6.0.x, 8.0.x, and 10.0.x, restores `SaaFarr.AI.Prompt.sln` with `--locked-mode`, and runs `dotnet build SaaFarr.AI.Prompt.sln -c Release --no-restore`.
+**Build** is the first gate. It checks out the repository with `fetch-depth: 0` so SourceLink and version metadata can resolve full history. It installs .NET SDK 6.0.x, 8.0.x, and 10.0.x, restores `Mima.AI.Prompt.sln` with `--locked-mode`, and runs `dotnet build Mima.AI.Prompt.sln -c Release --no-restore`.
 
 A green Build job means the library compiles for `netstandard2.0`, `net6.0`, `net8.0`, and `net10.0`.
 
 #### Test
 
-**Test** runs the xUnit suite with Coverlet and fails if line coverage of `SaaFarr.AI.Prompt` is below 95 percent. Untested or under-covered changes must not merge.
+**Test** runs the xUnit suite with Coverlet and fails if line coverage of `Mima.AI.Prompt` is below 95 percent. Untested or under-covered changes must not merge.
 
 The job is named `Test`, which is the label shown on Actions and on pull request checks. It declares `needs: build` so test minutes are not spent when the solution does not compile. It does not reuse Build binaries. It runs on `ubuntu-latest`.
 
@@ -158,27 +180,31 @@ The job is named `Test`, which is the label shown on Actions and on pull request
 
 `cache: true` stores the NuGet global-packages folder in GitHub’s cache after restore. Later runs with the same lock-file hash skip re-downloading packages such as PolySharp, xUnit, and Coverlet.
 
-`cache-dependency-path` hashes both `packages.lock.json` and `tests/SaaFarr.AI.Prompt.Tests/packages.lock.json`. If either file changes, GitHub uses a new cache key instead of restoring against a stale set.
+`cache-dependency-path` hashes both `packages.lock.json` and `tests/Mima.AI.Prompt.Tests/packages.lock.json`. If either file changes, GitHub uses a new cache key instead of restoring against a stale set.
 
 `cache: true` requires those lock files in the repository. The setup-dotnet action fails if they are missing. Both project files set `RestorePackagesWithLockFile`. After changing a `PackageReference`, run `dotnet restore` locally and commit the updated lock files.
 
-**Restore dependencies** runs `dotnet restore SaaFarr.AI.Prompt.sln --locked-mode`. The solution is restored because tests reference the library. `--locked-mode` refuses to update lock files on the runner. If a contributor changes a package version without committing `packages.lock.json`, restore fails instead of resolving a different version.
+**Restore dependencies** runs `dotnet restore Mima.AI.Prompt.sln --locked-mode`. The solution is restored because tests reference the library. `--locked-mode` refuses to update lock files on the runner. If a contributor changes a package version without committing `packages.lock.json`, restore fails instead of resolving a different version.
 
-**Run unit tests with coverage** executes `dotnet test` on `tests/SaaFarr.AI.Prompt.Tests/SaaFarr.AI.Prompt.Tests.csproj` with these arguments:
+**Run unit tests with coverage** executes `dotnet test` on `tests/Mima.AI.Prompt.Tests/Mima.AI.Prompt.Tests.csproj` with these arguments:
 
 - `-c Release` uses the same configuration as Build and Pack.
 - `--no-restore` skips a second restore.
 - `/p:CollectCoverage=true` instruments the library with Coverlet.
 - `/p:CoverletOutputFormat=cobertura` writes an XML report suitable for the upload step.
-- `/p:CoverletOutput=./coverage/` writes under the test project directory, `tests/SaaFarr.AI.Prompt.Tests/coverage/`, which is the upload path.
-- `/p:Include=[SaaFarr.AI.Prompt]*` measures this library only, not test frameworks.
+- `/p:CoverletOutput=./coverage/` writes under the test project directory, `tests/Mima.AI.Prompt.Tests/coverage/`, which is the upload path.
+- `/p:Include=[Mima.AI.Prompt]*` measures this library only, not test frameworks.
 - `/p:Threshold=95` fails the job below 95 percent coverage.
 - `/p:ThresholdType=line` applies the threshold to line coverage.
 - `/p:ThresholdStat=total` applies one total across the assembly.
 
 If this step fails, tests failed, coverage is below 95 percent, or an earlier step failed. Fix tests or add coverage. Do not lower the threshold in a product change without a documented reason.
 
-**Upload coverage report** uses `actions/upload-artifact@v4` with `if: always()` so the report is available even when tests fail. The artifact name is `coverage-report`. The path is `tests/SaaFarr.AI.Prompt.Tests/coverage/`. `if-no-files-found: ignore` prevents a missing report from failing the job when Coverlet never ran. Retention is 14 days.
+**Upload coverage report** uses `actions/upload-artifact@v4` with `if: always()` so the report is available even when tests fail. The artifact name is `coverage-report`. The path is `tests/Mima.AI.Prompt.Tests/coverage/`. `if-no-files-found: ignore` prevents a missing report from failing the job when Coverlet never ran. Retention is 14 days.
+
+**Render coverage report** reads `coverage.cobertura.xml` and writes a markdown table (library totals plus per-file line and branch rates). It appends that table to the GitHub Actions job summary on the **Test** check. Open the Test job and expand **Summary** to read it.
+
+**Comment coverage on pull request** posts or updates a sticky comment on the pull request with the same table. The Test job requests `pull-requests: write`. Fork pull requests may skip the comment if `GITHUB_TOKEN` cannot write to the parent repo; the job summary and coverage artifact still work. `continue-on-error: true` keeps a comment failure from failing Test after coverage already passed.
 
 The Test job does not publish to nuget.org.
 
@@ -192,13 +218,13 @@ It declares `needs: test`, so it runs only after Test (and therefore Build) succ
 
 **Checkout repository** uses `actions/checkout@v7`. Packing needs `README.md`, `LICENSE`, the project file, and `packages.lock.json` from the same commit.
 
-**Setup .NET SDK** uses `actions/setup-dotnet@v6` with 8.0.x and 10.0.x only. Packing does not execute the net6.0 test host. SDK 8 and 10 can pack all target frameworks in `SaaFarr.AI.Prompt.csproj` (`netstandard2.0` through `net10.0`). Omitting 6.0.x reduces setup time.
+**Setup .NET SDK** uses `actions/setup-dotnet@v6` with 8.0.x and 10.0.x only. Packing does not execute the net6.0 test host. SDK 8 and 10 can pack all target frameworks in `Mima.AI.Prompt.csproj` (`netstandard2.0` through `net10.0`). Omitting 6.0.x reduces setup time.
 
 `cache: true` uses the same NuGet cache mechanism as the other jobs. `cache-dependency-path` is `packages.lock.json` only, because this job restores the library project, not the test project.
 
-**Restore dependencies** runs `dotnet restore SaaFarr.AI.Prompt.csproj --locked-mode`. The library project is restored; tests are not packed. `--locked-mode` again requires the committed lock file to match `PackageReference` items.
+**Restore dependencies** runs `dotnet restore Mima.AI.Prompt.csproj --locked-mode`. The library project is restored; tests are not packed. `--locked-mode` again requires the committed lock file to match `PackageReference` items.
 
-**Pack NuGet package** runs `dotnet pack SaaFarr.AI.Prompt.csproj` with `-c Release`, `--no-restore`, `-o ./artifacts`, and `/p:ContinuousIntegrationBuild=true`. Release is the configuration consumers receive. Output is written to `./artifacts` for the upload step. `ContinuousIntegrationBuild` enables deterministic, SourceLink-friendly packing (also implied by `env.CI` in the workflow).
+**Pack NuGet package** runs `dotnet pack Mima.AI.Prompt.csproj` with `-c Release`, `--no-restore`, `-o ./artifacts`, and `/p:ContinuousIntegrationBuild=true`. Release is the configuration consumers receive. Output is written to `./artifacts` for the upload step. `ContinuousIntegrationBuild` enables deterministic, SourceLink-friendly packing (also implied by `env.CI` in the workflow).
 
 On a successful run, open **Actions**, the run, **Pack**, then **Artifacts**. The package is for inspection. Continuous integration must not call `dotnet nuget push`. Fork pull requests must never receive a nuget.org key.
 
@@ -270,11 +296,11 @@ If **Trusted Publishing** is not listed on your nuget.org account, the feature m
 ### 6.1 Register a policy on nuget.org
 
 1. Sign in at [https://www.nuget.org/](https://www.nuget.org/). Create an account if necessary.
-2. Confirm that this account will own package identifier `SaaFarr.AI.Prompt`. The first publish creates the package under the policy owner. Later publishes must use a policy owned by an owner of that package.
+2. Confirm that this account will own package identifier `Mima.AI.Prompt`. The first publish creates the package under the policy owner. Later publishes must use a policy owned by an owner of that package.
 3. Select the username in the upper right, then **Trusted Publishing**.
 4. Add a new policy. Values are case-insensitive. For this repository use:
    - **Repository Owner:** `johnsonmima`
-   - **Repository:** `SaaFarr.AI.Prompt`
+   - **Repository:** `Mima.AI.Prompt`
    - **Workflow File:** `release.yml` (file name only; do not include `.github/workflows/`)
    - **Environment:** leave empty. The workflow does not set `environment:`. If you later add a GitHub Environment, put that same name here.
 5. Choose policy ownership: yourself (individual) or an organization you belong to. The policy applies to all packages owned by that owner. If you leave an organization later, an org-owned policy can become inactive until you are added back.
@@ -302,7 +328,7 @@ Do not add `NUGET_USER` to the CI workflow. CI runs on every pull request, inclu
 2. Leave `dry_run` set to `true`. Confirm restore, build, test, and pack succeed. This rehearsal does not call nuget.org.
 3. To publish, push a tag such as `v1.0.0`, or run the workflow with `dry_run` set to `false`.
 4. Open the run and inspect **NuGet login (OIDC)** then **Push to NuGet.org**. Failures usually mean the policy owner/repo/workflow file does not match, `NUGET_USER` is missing or is an email, `id-token: write` is missing, or Trusted Publishing is not enabled for the account.
-5. After a successful push, the package appears at [https://www.nuget.org/packages/SaaFarr.AI.Prompt](https://www.nuget.org/packages/SaaFarr.AI.Prompt) after indexing (often a few minutes). `--skip-duplicate` makes a repeat push of the same version a no-op instead of a hard error.
+5. After a successful push, the package appears at [https://www.nuget.org/packages/Mima.AI.Prompt](https://www.nuget.org/packages/Mima.AI.Prompt) after indexing (often a few minutes). `--skip-duplicate` makes a repeat push of the same version a no-op instead of a hard error.
 
 ### 6.4 Optional GitHub Environment
 
@@ -470,7 +496,7 @@ Complete these steps once when standing up or auditing the public repository.
 4. Under **Settings**, **Actions**, **General**: allow all actions; require approval for first-time fork pull requests; workflow permissions read and write; save.
 5. Confirm the **Actions** tab shows a successful **CI** run with **Build**, **Test**, and **Pack**.
 6. Under **Settings**, **Rules** (or **Branches**): protect `main`; require those three checks; require linear history; block force pushes; include administrators.
-7. Register a Trusted Publishing policy on nuget.org for `johnsonmima` / `SaaFarr.AI.Prompt` / `release.yml`. Under **Settings**, **Secrets and variables**, **Actions**, add repository secret `NUGET_USER` (nuget.org profile name). Do not store an API key.
+7. Register a Trusted Publishing policy on nuget.org for `johnsonmima` / `Mima.AI.Prompt` / `release.yml`. Under **Settings**, **Secrets and variables**, **Actions**, add repository secret `NUGET_USER` (nuget.org profile name). Do not store an API key.
 8. Under **Settings**, **Code security**: enable Dependabot, secret scanning, push protection, and private vulnerability reporting.
 9. Confirm the README CI badge points at this repository’s `ci.yml`.
 10. Confirm `LICENSE` is MIT at the repository root.
@@ -504,7 +530,7 @@ Possible causes:
 
 - `dry_run` was left `true` on a manual run. Tag pushes always attempt publish.
 - **Trusted Publishing** is not visible on the nuget.org account yet.
-- The policy **Repository Owner**, **Repository**, or **Workflow File** does not match `johnsonmima`, `SaaFarr.AI.Prompt`, and `release.yml`.
+- The policy **Repository Owner**, **Repository**, or **Workflow File** does not match `johnsonmima`, `Mima.AI.Prompt`, and `release.yml`.
 - `NUGET_USER` is missing, or it is an email address instead of the nuget.org profile name.
 - The job lacks `permissions.id-token: write`.
 - The policy is inactive (seven-day window expired without a successful publish, or the policy owner left the organization). Restart the window or restore membership on nuget.org.
@@ -514,8 +540,8 @@ Possible causes:
 
 ## 16. References
 
-- Repository: [https://github.com/johnsonmima/SaaFarr.AI.Prompt](https://github.com/johnsonmima/SaaFarr.AI.Prompt)
-- NuGet package: [https://www.nuget.org/packages/SaaFarr.AI.Prompt](https://www.nuget.org/packages/SaaFarr.AI.Prompt)
+- Repository: [https://github.com/johnsonmima/Mima.AI.Prompt](https://github.com/johnsonmima/Mima.AI.Prompt)
+- NuGet package: [https://www.nuget.org/packages/Mima.AI.Prompt](https://www.nuget.org/packages/Mima.AI.Prompt)
 - [Publish a NuGet package](https://learn.microsoft.com/en-us/nuget/nuget-org/publish-a-package)
 - [Trusted Publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing)
 - [Managing GitHub Actions settings](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository)

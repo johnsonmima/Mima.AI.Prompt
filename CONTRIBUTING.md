@@ -1,4 +1,4 @@
-# Contributing to SaaFarr.AI.Prompt
+# Contributing to Mima.AI.Prompt
 
 Thanks for helping improve this library. This document explains how to contribute effectively to an open-source .NET package.
 
@@ -12,7 +12,7 @@ Participation is governed by [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## Ways to contribute
 
-- Report bugs and request features via [GitHub Issues](https://github.com/johnsonmima/SaaFarr.AI.Prompt/issues)
+- Report bugs and request features via [GitHub Issues](https://github.com/johnsonmima/Mima.AI.Prompt/issues)
 - Improve documentation (README, [AGENT.md](AGENT.md), XML docs, samples)
 - Add or fix unit tests (prefer README/`AGENT.md`-aligned cases in `EndToEndUsageTests` / `AgentTests`)
 - Propose API improvements via an Issue **before** a large PR
@@ -23,22 +23,30 @@ Participation is governed by [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 2. Clone the repository:
 
 ```bash
-git clone https://github.com/johnsonmima/SaaFarr.AI.Prompt.git
-cd SaaFarr.AI.Prompt
+git clone https://github.com/johnsonmima/Mima.AI.Prompt.git
+cd Mima.AI.Prompt
 ```
 
 3. Restore and build:
 
 ```bash
-dotnet restore SaaFarr.AI.Prompt.sln
-dotnet build SaaFarr.AI.Prompt.sln -c Release
+dotnet restore Mima.AI.Prompt.sln
+dotnet build Mima.AI.Prompt.sln -c Release
 ```
 
 4. Run tests with coverage:
 
 ```bash
-dotnet test SaaFarr.AI.Prompt.sln -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+dotnet test Mima.AI.Prompt.sln -c Release --no-restore \
+  '/p:CollectCoverage=true' \
+  '/p:CoverletOutputFormat=cobertura' \
+  '/p:Include=[Mima.AI.Prompt]*' \
+  '/p:Threshold=95' \
+  '/p:ThresholdType=line' \
+  '/p:ThresholdStat=total'
 ```
+
+Quote `/p:Include=...` in zsh. Do not pass `--no-build` when collecting coverage; Coverlet instruments at compile time.
 
 ## Branching & pull requests
 
@@ -63,7 +71,7 @@ git checkout -b feature/short-description
 - [ ] XML documentation on new public members
 - [ ] No secrets, credentials, or personal paths committed
 - [ ] `CHANGELOG.md` updated when user-facing
-- [ ] Follows existing naming: `SaaFarr.AI.Prompt.*` namespaces
+- [ ] Follows existing naming: `Mima.AI.Prompt.*` namespaces
 - [ ] If you change `PackageReference` versions, run `dotnet restore` and commit the updated `packages.lock.json` files (CI restore uses `--locked-mode`)
 
 ## Coding standards

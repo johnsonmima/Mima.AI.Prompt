@@ -1,6 +1,6 @@
-using SaaFarr.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Interfaces;
 
-namespace SaaFarr.AI.Prompt.Caching;
+namespace Mima.AI.Prompt.Caching;
 
 /// <summary>
 /// Interface for caching rendered prompts to avoid repeated template rendering

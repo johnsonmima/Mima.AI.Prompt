@@ -1,7 +1,7 @@
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Models;
 
-namespace SaaFarr.AI.Prompt.Content;
+namespace Mima.AI.Prompt.Content;
 
 /// <summary>Audio content part.</summary>
 public sealed class AudioPart : IContentPart

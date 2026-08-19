@@ -1,10 +1,10 @@
 using System.Reflection;
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Catalog;
-using SaaFarr.AI.Prompt.Roles;
-using SaaFarr.AI.Prompt.Templates;
+using Mima.AI.Prompt.Catalog;
+using Mima.AI.Prompt.Roles;
+using Mima.AI.Prompt.Templates;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 public class CatalogTests
 {

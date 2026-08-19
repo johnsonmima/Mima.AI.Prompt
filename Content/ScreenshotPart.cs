@@ -1,7 +1,7 @@
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Models;
 
-namespace SaaFarr.AI.Prompt.Content;
+namespace Mima.AI.Prompt.Content;
 
 /// <summary>Screenshot / frame used in computer-use agent loops.</summary>
 public sealed class ScreenshotPart : IContentPart

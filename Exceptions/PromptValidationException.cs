@@ -1,4 +1,4 @@
-namespace SaaFarr.AI.Prompt.Exceptions;
+namespace Mima.AI.Prompt.Exceptions;
 
 /// <summary>
 /// Thrown when prompt validation fails (missing variables, invalid content, etc.).

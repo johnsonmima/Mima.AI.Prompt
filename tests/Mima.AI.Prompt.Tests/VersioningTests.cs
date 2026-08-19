@@ -1,13 +1,13 @@
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Versioning;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Versioning;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 public class VersioningTests
 {
-    private static IPrompt MakePrompt(string content) => SaaFarr.AI.Prompt.Builder.PromptBuilder.UserOnly(content);
+    private static IPrompt MakePrompt(string content) => Mima.AI.Prompt.Builder.PromptBuilder.UserOnly(content);
 
     // --- VersionedPromptAsset ---
 

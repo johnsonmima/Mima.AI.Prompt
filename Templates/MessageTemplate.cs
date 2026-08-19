@@ -1,11 +1,11 @@
 using System.Text.RegularExpressions;
-using SaaFarr.AI.Prompt.Exceptions;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
-using SaaFarr.AI.Prompt.Messages;
+using Mima.AI.Prompt.Exceptions;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
+using Mima.AI.Prompt.Messages;
 
-namespace SaaFarr.AI.Prompt.Templates;
+namespace Mima.AI.Prompt.Templates;
 
 /// <summary>
 /// Base class for message templates with variable placeholder support.

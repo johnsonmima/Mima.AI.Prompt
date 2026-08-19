@@ -1,11 +1,11 @@
 using FluentAssertions;
-using SaaFarr.AI.Prompt.Exceptions;
-using SaaFarr.AI.Prompt.Interfaces;
-using SaaFarr.AI.Prompt.Messages;
-using SaaFarr.AI.Prompt.Models;
-using SaaFarr.AI.Prompt.Roles;
+using Mima.AI.Prompt.Exceptions;
+using Mima.AI.Prompt.Interfaces;
+using Mima.AI.Prompt.Messages;
+using Mima.AI.Prompt.Models;
+using Mima.AI.Prompt.Roles;
 
-namespace SaaFarr.AI.Prompt.Tests;
+namespace Mima.AI.Prompt.Tests;
 
 public class PromptModelTests
 {
@@ -272,8 +272,8 @@ public class PromptModelTests
     [Fact]
     public void PromptChain_Add_AppendsPrompt()
     {
-        var prompt1 = SaaFarr.AI.Prompt.Builder.PromptBuilder.UserOnly("first");
-        var prompt2 = SaaFarr.AI.Prompt.Builder.PromptBuilder.UserOnly("second");
+        var prompt1 = Mima.AI.Prompt.Builder.PromptBuilder.UserOnly("first");
+        var prompt2 = Mima.AI.Prompt.Builder.PromptBuilder.UserOnly("second");
 
         var chain = PromptChain.Create("MyChain").Add(prompt1).Add(prompt2);
 
@@ -291,7 +291,7 @@ public class PromptModelTests
     [Fact]
     public void PromptChain_Indexer_ReturnsStepAtIndex()
     {
-        var prompt1 = SaaFarr.AI.Prompt.Builder.PromptBuilder.UserOnly("first");
+        var prompt1 = Mima.AI.Prompt.Builder.PromptBuilder.UserOnly("first");
         var chain = PromptChain.Create("MyChain").Add(prompt1);
 
         chain[0].Should().Be(prompt1);

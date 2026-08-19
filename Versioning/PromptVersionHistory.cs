@@ -1,6 +1,6 @@
-using SaaFarr.AI.Prompt.Models;
+using Mima.AI.Prompt.Models;
 
-namespace SaaFarr.AI.Prompt.Versioning;
+namespace Mima.AI.Prompt.Versioning;
 
 /// <summary>
 /// Tracks version history for a prompt asset, enabling rollback and audit trails.

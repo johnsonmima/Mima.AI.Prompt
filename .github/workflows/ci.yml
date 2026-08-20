@@ -1,0 +1,160 @@
+# Continuous Integration — Mima.AI.Prompt
+#
+# Why: open-source consumers and contributors need an automated, transparent
+# gate that proves every PR builds on all target frameworks, passes tests,
+# and packs a valid NuGet package before merge.
+#
+# Triggers: push to main / release branches, and all pull requests.
+
+name: CI
+
+on:
+  # Stage: run on pushes to protected / release branches
+  push:
+    branches: [main, master, 'v*']
+  # Stage: run on every pull request targeting those branches
+  pull_request:
+    branches: [main, master, 'v*']
+
+# Cancel in-progress runs for the same PR/branch to save Actions minutes
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  # Treat CI as ContinuousIntegrationBuild for SourceLink / deterministic builds
+  CI: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Stage: BUILD
+  # Restores dependencies and compiles the multi-targeted library
+  # (netstandard2.0, net6.0, net8.0, net10.0) plus the test project.
+  # ---------------------------------------------------------------------------
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      # Stage step: fetch full history so SourceLink / versioning can resolve commits
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # Stage step: install the .NET SDK that can build net10.0 and older TFMs
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: |
+            6.0.x
+            8.0.x
+            10.0.x
+          cache: true
+          cache-dependency-path: |
+            packages.lock.json
+            tests/Mima.AI.Prompt.Tests/packages.lock.json
+
+      # Stage step: restore NuGet packages (PolySharp, System.Text.Json, test deps)
+      - name: Restore dependencies
+        run: dotnet restore Mima.AI.Prompt.sln --locked-mode
+
+      # Stage step: compile Release configuration for all target frameworks
+      - name: Build solution
+        run: dotnet build Mima.AI.Prompt.sln -c Release --no-restore
+
+  # ---------------------------------------------------------------------------
+  # Stage: TEST
+  # Runs the full xUnit suite with Coverlet and fails if line coverage
+  # drops below the required threshold (open-source quality bar).
+  # ---------------------------------------------------------------------------
+  test:
+    name: Test
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: |
+            6.0.x
+            8.0.x
+            10.0.x
+          cache: true
+          cache-dependency-path: |
+            packages.lock.json
+            tests/Mima.AI.Prompt.Tests/packages.lock.json
+
+      - name: Restore dependencies
+        run: dotnet restore Mima.AI.Prompt.sln --locked-mode
+
+      # Stage step: execute unit tests and collect Cobertura coverage
+      - name: Run unit tests with coverage
+        run: >
+          dotnet test tests/Mima.AI.Prompt.Tests/Mima.AI.Prompt.Tests.csproj
+          -c Release
+          --no-restore
+          /p:CollectCoverage=true
+          /p:CoverletOutputFormat=cobertura
+          /p:CoverletOutput=./coverage/
+          /p:Include=[Mima.AI.Prompt]*
+          /p:Threshold=95
+          /p:ThresholdType=line
+          /p:ThresholdStat=total
+
+      # Stage step: upload coverage artifact for PR reviewers / badges
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: tests/Mima.AI.Prompt.Tests/coverage/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  # ---------------------------------------------------------------------------
+  # Stage: PACK
+  # Produces the NuGet package (.nupkg + .snupkg) to prove packing works.
+  # Publishing to nuget.org happens only in the separate release workflow.
+  # ---------------------------------------------------------------------------
+  pack:
+    name: Pack
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: |
+            6.0.x
+            8.0.x
+            10.0.x
+          cache: true
+          cache-dependency-path: packages.lock.json
+
+      - name: Restore dependencies
+        run: dotnet restore Mima.AI.Prompt.csproj --locked-mode
+
+      # Stage step: create the package that would be published
+      - name: Pack NuGet package
+        run: >
+          dotnet pack Mima.AI.Prompt.csproj
+          -c Release
+          --no-restore
+          -o ./artifacts
+          /p:ContinuousIntegrationBuild=true
+
+      # Stage step: retain artifacts for manual inspection / release promotion
+      - name: Upload NuGet artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages
+          path: ./artifacts/
+          retention-days: 14

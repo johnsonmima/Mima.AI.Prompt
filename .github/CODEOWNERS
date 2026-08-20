@@ -1,0 +1,9 @@
+# Who owns what — used when "Require review from Code Owners" is enabled
+
+## Why: open-source PRs should auto-request the right maintainer instead of
+
+## hoping someone notices a change to CI or public API
+
+*       @johnsonmima
+
+/.github/ @johnsonmima

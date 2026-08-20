@@ -1,0 +1,42 @@
+# Dependabot — keep GitHub Actions and NuGet packages current
+# Why: open-source libraries rot when transitive CVEs go unnoticed.
+# Automated PRs for dependency bumps are the lowest-cost defense.
+
+version: 2
+updates:
+  # Stage: NuGet dependencies in the library and test projects
+  - package-ecosystem: nuget
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - nuget
+    commit-message:
+      prefix: "chore(deps)"
+
+  - package-ecosystem: nuget
+    directory: "/tests/Mima.AI.Prompt.Tests"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - nuget
+    commit-message:
+      prefix: "chore(deps)"
+
+  # Stage: GitHub Actions action versions (checkout, setup-dotnet, …)
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: "chore(ci)"

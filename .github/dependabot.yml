@@ -1,6 +1,7 @@
 # Dependabot — keep GitHub Actions and NuGet packages current
 # Why: open-source libraries rot when transitive CVEs go unnoticed.
-# Automated PRs for dependency bumps are the lowest-cost defense.
+# Version-update PRs: every 6 months (1 Jan and 1 Jul UTC). Security alerts
+# take those on a human PR when you want the breaking upgrade.
 
 version: 2
 updates:
@@ -8,33 +9,38 @@ updates:
   - package-ecosystem: nuget
     directory: "/"
     schedule:
-      interval: weekly
-      day: monday
+      interval: semiannually
     open-pull-requests-limit: 10
     labels:
       - dependencies
       - nuget
     commit-message:
       prefix: "chore(deps)"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
 
   - package-ecosystem: nuget
     directory: "/tests/Mima.AI.Prompt.Tests"
     schedule:
-      interval: weekly
-      day: monday
+      interval: semiannually
     open-pull-requests-limit: 5
     labels:
       - dependencies
       - nuget
     commit-message:
       prefix: "chore(deps)"
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
 
   # Stage: GitHub Actions action versions (checkout, setup-dotnet, …)
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
-      interval: weekly
-      day: monday
+      interval: semiannually
     labels:
       - dependencies
       - github-actions

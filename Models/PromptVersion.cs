@@ -72,8 +72,8 @@ public sealed class PromptVersion : IComparable<PromptVersion>, IEquatable<Promp
         Major = major;
         Minor = minor;
         Patch = patch;
-        PreRelease = string.IsNullOrWhiteSpace(preRelease) ? null : preRelease!.Trim();
-        BuildMetadata = string.IsNullOrWhiteSpace(buildMetadata) ? null : buildMetadata!.Trim();
+        PreRelease = preRelease is { } pre && !string.IsNullOrWhiteSpace(pre) ? pre.Trim() : null;
+        BuildMetadata = buildMetadata is { } build && !string.IsNullOrWhiteSpace(build) ? build.Trim() : null;
     }
 
     /// <summary>Factory method to create a version.</summary>
@@ -133,11 +133,12 @@ public sealed class PromptVersion : IComparable<PromptVersion>, IEquatable<Promp
     public static bool TryParse(string? version, out PromptVersion? result)
     {
         result = null;
-        if (string.IsNullOrWhiteSpace(version)) return false;
+        if (version is not { } text || string.IsNullOrWhiteSpace(text))
+            return false;
 
         try
         {
-            result = Parse(version!);
+            result = Parse(text);
             return true;
         }
         catch
@@ -169,7 +170,7 @@ public sealed class PromptVersion : IComparable<PromptVersion>, IEquatable<Promp
     /// </summary>
     /// <param name="other">The version to check compatibility with.</param>
     /// <returns>True if backward-compatible.</returns>
-    public bool IsCompatibleWith(PromptVersion other) =>
+    public bool IsCompatibleWith(PromptVersion? other) =>
         other is not null && Major == other.Major && (Minor > other.Minor || (Minor == other.Minor && Patch >= other.Patch));
 
     /// <inheritdoc />

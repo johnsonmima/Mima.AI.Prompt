@@ -109,6 +109,15 @@ public class TemplateTests
     }
 
     [Fact]
+    public void Variables_DiscoversProfessionToneAndMaxWords()
+    {
+        var template = SystemTemplate.Create(
+            "You are a {{profession}}. Use a {{tone}} tone. Limit responses to {{maxWords}} words.");
+
+        template.Variables.Should().Equal("profession", "tone", "maxWords");
+    }
+
+    [Fact]
     public void Variables_DiscoversMultipleDistinctVariables()
     {
         var template = SystemTemplate.Create("{{a}} and {{b}} and {{a}} again");
@@ -134,10 +143,24 @@ public class TemplateTests
     }
 
     [Fact]
+    public void Validate_ProfessionWithoutProduct_ReportsProductMissing()
+    {
+        var template = SystemTemplate.Create("You are a {{profession}}. Product: {{product}}.");
+        var check = template.Validate(new Dictionary<string, object>
+        {
+            ["profession"] = "Teacher"
+        });
+
+        check.IsValid.Should().BeFalse();
+        check.MissingVariables.Should().Equal("product");
+        check.Errors.Should().ContainSingle().Which.Should().Be("Missing required variable: 'product'");
+    }
+
+    [Fact]
     public void Validate_NullVariableValue_TreatedAsMissing()
     {
         var template = SystemTemplate.Create("Hi {{name}}");
-        var dict = new Dictionary<string, object> { ["name"] = null! };
+        var dict = new Dictionary<string, object> { ["name"] = TestNull.Ref<object>() };
         var result = template.Validate(dict);
 
         result.IsValid.Should().BeFalse();
@@ -198,14 +221,14 @@ public class TemplateTests
     [InlineData("   ")]
     public void Ctor_EmptyContent_Throws(string? content)
     {
-        var act = () => SystemTemplate.Create(content!);
+        var act = () => SystemTemplate.Create(content ?? TestNull.Ref<string>());
         act.Should().Throw<PromptValidationException>().WithMessage("*Template content cannot be null or empty*");
     }
 
     [Fact]
     public void Ctor_NullRole_Throws()
     {
-        var act = () => new TestTemplate(null!, "content");
+        var act = () => new TestTemplate(TestNull.Ref<MessageRole>(), "content");
         act.Should().Throw<ArgumentNullException>();
     }
 

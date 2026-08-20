@@ -131,9 +131,14 @@ public abstract class MessageTemplate : IMessageTemplate
         if (obj is IDictionary<string, object> dict)
             return dict;
 
-        return obj.GetType()
-            .GetProperties()
-            .Where(p => p.CanRead)
-            .ToDictionary(p => p.Name, p => p.GetValue(obj)!);
+        var result = new Dictionary<string, object>();
+        foreach (var property in obj.GetType().GetProperties().Where(p => p.CanRead))
+        {
+            var value = property.GetValue(obj);
+            if (value is not null)
+                result[property.Name] = value;
+        }
+
+        return result;
     }
 }

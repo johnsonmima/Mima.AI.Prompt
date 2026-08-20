@@ -16,7 +16,6 @@ public class ValidationTests
         public IReadOnlyList<IContentPart> Parts { get; } = Array.Empty<IContentPart>();
         public string? Name => null;
         public IReadOnlyList<MessageAnnotation> Annotations { get; } = Array.Empty<MessageAnnotation>();
-        public CacheControl? CacheControl => null;
         public MessageMetadata Metadata { get; } = MessageMetadata.Empty;
         public string Id { get; } = Guid.NewGuid().ToString("N");
 
@@ -53,7 +52,7 @@ public class ValidationTests
     public void Validate_NullPrompt_Throws()
     {
         var validator = new PromptValidator();
-        var act = () => validator.Validate(null!);
+        var act = () => validator.Validate(TestNull.Ref<IPrompt>());
         act.Should().Throw<ArgumentNullException>();
     }
 

@@ -4,11 +4,11 @@ using System.Text.Json.Serialization;
 namespace Mima.AI.Prompt.Serialization;
 
 /// <summary>
-/// Shared <see cref="JsonSerializerOptions"/> for adapters, renderers, and persistence.
+/// Shared <see cref="JsonSerializerOptions"/> for canonical prompt JSON.
 /// </summary>
 internal static class PromptJsonOptions
 {
-    /// <summary>Indented camelCase JSON (provider payloads and generic rendering).</summary>
+    /// <summary>Indented camelCase JSON.</summary>
     public static JsonSerializerOptions IndentedCamelCase { get; } = Create();
 
     /// <summary>Same as <see cref="IndentedCamelCase"/>, omitting null properties (prompt persistence).</summary>

@@ -93,7 +93,8 @@ public sealed class LocalizedTemplate
                     ? AssistantTemplate.Create(content, Metadata)
                     : Role == MessageRole.Developer
                         ? DeveloperTemplate.Create(content, Metadata)
-                        : CustomTemplate.Create(Role, content, Metadata);
+                    : throw new InvalidOperationException(
+                        $"LocalizedTemplate only supports system, user, assistant, and developer roles.");
         return template.Render(variables);
     }
 

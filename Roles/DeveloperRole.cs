@@ -2,7 +2,7 @@ namespace Mima.AI.Prompt.Roles;
 
 /// <summary>
 /// Developer role - sits between system and user, providing additional context or constraints.
-/// Not all providers support this role; adapters may merge it into system messages.
+/// Vendor mappers may fold this role into a system message if the target API has no developer role.
 /// </summary>
 /// <example>
 /// <code>

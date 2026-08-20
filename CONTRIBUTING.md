@@ -13,8 +13,8 @@ Participation is governed by [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 ## Ways to contribute
 
 - Report bugs and request features via [GitHub Issues](https://github.com/johnsonmima/Mima.AI.Prompt/issues)
-- Improve documentation (README, [AGENT.md](AGENT.md), XML docs, samples)
-- Add or fix unit tests (prefer README/`AGENT.md`-aligned cases in `EndToEndUsageTests` / `AgentTests`)
+- Improve documentation (README, XML docs, samples)
+- Add or fix unit tests (prefer README-aligned cases in `EndToEndUsageTests`)
 - Propose API improvements via an Issue **before** a large PR
 
 ## Development setup
@@ -77,7 +77,7 @@ git checkout -b feature/short-description
 ## Coding standards
 
 - Prefer immutable types for domain objects (messages, prompts).
-- Keep the core library provider-agnostic; HTTP clients belong in adapter packages.
+- Keep the public API on prompt composition, validation, and canonical JSON. Do not add HTTP clients or vendor request bodies.
 - Avoid breaking public API without a major version bump (SemVer).
 - Use PolySharp-friendly modern C#; do not introduce APIs that break `netstandard2.0` without a polyfill or `#if`.
 

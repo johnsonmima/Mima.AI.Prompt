@@ -110,7 +110,7 @@ public class PromptVersionTests
     [InlineData("   ")]
     public void Parse_NullOrEmpty_Throws(string? input)
     {
-        var act = () => PromptVersion.Parse(input!);
+        var act = () => PromptVersion.Parse(input ?? TestNull.Ref<string>());
         act.Should().Throw<ArgumentException>().WithMessage("*Version string cannot be null or empty*");
     }
 
@@ -248,7 +248,7 @@ public class PromptVersionTests
     public void IsCompatibleWith_Null_ReturnsFalse()
     {
         var v1 = PromptVersion.Create(1, 0, 0);
-        v1.IsCompatibleWith(null!).Should().BeFalse();
+        v1.IsCompatibleWith(null).Should().BeFalse();
     }
 
     [Fact]

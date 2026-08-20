@@ -125,7 +125,7 @@ Keep the pull request to one concern. Do not mix a public API change, a CI rewri
 While editing:
 
 - New public members need XML documentation.
-- New or changed behavior needs tests under `tests/Mima.AI.Prompt.Tests/`. Prefer cases that match README or [AGENT.md](AGENT.md) in `EndToEndUsageTests` or `AgentTests` when those files are the right place.
+- New or changed behavior needs tests under `tests/Mima.AI.Prompt.Tests/`. Prefer cases that match README in `EndToEndUsageTests` when that file is the right place.
 - Namespaces and package id stay `Mima.AI.Prompt`.
 - Do not commit secrets, `.env` files, or personal paths.
 - If you change a `PackageReference`, run `dotnet restore Mima.AI.Prompt.sln` and commit both `packages.lock.json` and `tests/Mima.AI.Prompt.Tests/packages.lock.json`. CI restore uses `--locked-mode` and will fail if the lock files are stale.

@@ -6,8 +6,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        This package is **prompt composition** (messages, templates, validation, JSON adapters).
-        It does **not** call models or run tools. Feature requests for HTTP clients, native `tools` arrays, or agent loops belong in the **host app** (or a future separate package), not as “this NuGet should become Semantic Kernel.”
+        This package is **prompt composition**: messages, templates, validation, and canonical JSON.
+        Feature requests should stay in that surface (builder, parts, serializer, validator, conversation, versioning).
   - type: textarea
     id: problem
     attributes:
@@ -19,7 +19,7 @@ body:
     id: proposal
     attributes:
       label: Proposed API / behavior
-      description: Sketches welcome (namespaces must stay under Mima.AI.Prompt).
+      description: Sketches welcome. Namespaces stay `Mima.AI.Prompt`.
       render: csharp
     validations:
       required: true

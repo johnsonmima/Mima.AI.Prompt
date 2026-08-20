@@ -21,7 +21,7 @@ public class LocalizationTests
     [Fact]
     public void Create_NullRole_Throws()
     {
-        var act = () => LocalizedTemplate.Create(null!);
+        var act = () => LocalizedTemplate.Create(TestNull.Ref<MessageRole>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -50,7 +50,7 @@ public class LocalizationTests
     public void AddLocale_EmptyLocale_Throws(string? locale)
     {
         var template = LocalizedTemplate.Create(MessageRole.System);
-        var act = () => template.AddLocale(locale!, "content");
+        var act = () => template.AddLocale(locale ?? TestNull.Ref<string>(), "content");
         act.Should().Throw<ArgumentException>().WithMessage("*Locale cannot be empty*");
     }
 
@@ -61,7 +61,7 @@ public class LocalizationTests
     public void AddLocale_EmptyContent_Throws(string? content)
     {
         var template = LocalizedTemplate.Create(MessageRole.System);
-        var act = () => template.AddLocale("en", content!);
+        var act = () => template.AddLocale("en", content ?? TestNull.Ref<string>());
         act.Should().Throw<ArgumentException>().WithMessage("*Content cannot be empty*");
     }
 
@@ -160,17 +160,15 @@ public class LocalizationTests
     }
 
     [Fact]
-    public void Render_CustomRole_ProducesCustomMessage()
+    public void Render_DeveloperRole_ProducesDeveloperMessage()
     {
-        var critic = MessageRole.Custom("critic");
-        var template = LocalizedTemplate.Create(critic)
-            .AddLocale("en", "Critique: {{text}}");
+        var template = LocalizedTemplate.Create(MessageRole.Developer)
+            .AddLocale("en", "Rule: {{text}}");
 
         var message = template.Render("en", new Dictionary<string, object> { ["text"] = "claim" });
 
-        message.Should().BeOfType<CustomMessage>();
-        message.Role.Name.Should().Be("critic");
-        message.Content.Should().Be("Critique: claim");
+        message.Should().BeOfType<DeveloperMessage>();
+        message.Content.Should().Be("Rule: claim");
     }
 
     [Fact]

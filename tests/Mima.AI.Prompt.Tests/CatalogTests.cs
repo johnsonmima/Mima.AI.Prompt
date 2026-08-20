@@ -11,12 +11,22 @@ public class CatalogTests
     public static IEnumerable<object[]> SystemTemplateProperties() =>
         typeof(SystemTemplates)
             .GetProperties(BindingFlags.Public | BindingFlags.Static)
-            .Select(p => new object[] { p.Name, (SystemTemplate)p.GetValue(null)! });
+            .Select(p =>
+            {
+                var template = p.GetValue(null) as SystemTemplate
+                    ?? throw new InvalidOperationException($"{p.Name} is not a SystemTemplate.");
+                return new object[] { p.Name, template };
+            });
 
     public static IEnumerable<object[]> UserTemplateProperties() =>
         typeof(UserTemplates)
             .GetProperties(BindingFlags.Public | BindingFlags.Static)
-            .Select(p => new object[] { p.Name, (UserTemplate)p.GetValue(null)! });
+            .Select(p =>
+            {
+                var template = p.GetValue(null) as UserTemplate
+                    ?? throw new InvalidOperationException($"{p.Name} is not a UserTemplate.");
+                return new object[] { p.Name, template };
+            });
 
     [Theory]
     [MemberData(nameof(SystemTemplateProperties))]

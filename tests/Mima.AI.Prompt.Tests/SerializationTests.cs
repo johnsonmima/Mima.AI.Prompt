@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentAssertions;
+using Mima.AI.Prompt.Content;
 using Mima.AI.Prompt.Interfaces;
 using Mima.AI.Prompt.Messages;
 using Mima.AI.Prompt.Models;
@@ -34,7 +35,7 @@ public class SerializationTests
     [Fact]
     public void Serialize_NullPrompt_Throws()
     {
-        var act = () => _serializer.Serialize((IPrompt)null!);
+        var act = () => _serializer.Serialize(TestNull.Ref<IPrompt>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -44,7 +45,7 @@ public class SerializationTests
     [InlineData("   ")]
     public void DeserializePrompt_NullOrEmptyJson_Throws(string? json)
     {
-        var act = () => _serializer.DeserializePrompt(json!);
+        var act = () => _serializer.DeserializePrompt(json ?? TestNull.Ref<string>());
         act.Should().Throw<ArgumentException>().WithMessage("*JSON cannot be null or empty*");
     }
 
@@ -104,12 +105,22 @@ public class SerializationTests
 
         json.Should().Contain("\"role\"");
         json.Should().Contain("hello");
+        json.Should().Contain("\"parts\"");
+        json.Should().NotContain("\"content\"");
+    }
+
+    [Fact]
+    public void SerializeMessage_DoesNotDuplicateContentAlongsideParts()
+    {
+        var json = _serializer.SerializeMessage(new UserMessage("hello"));
+        json.Should().Contain("\"type\": \"text\"");
+        json.Should().NotContain("\"content\"");
     }
 
     [Fact]
     public void SerializeMessage_Null_Throws()
     {
-        var act = () => _serializer.SerializeMessage((IMessage)null!);
+        var act = () => _serializer.SerializeMessage(TestNull.Ref<IMessage>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -170,7 +181,7 @@ public class SerializationTests
     [InlineData("   ")]
     public void DeserializeMessage_NullOrEmptyJson_Throws(string? json)
     {
-        var act = () => _serializer.DeserializeMessage(json!);
+        var act = () => _serializer.DeserializeMessage(json ?? TestNull.Ref<string>());
         act.Should().Throw<ArgumentException>().WithMessage("*JSON cannot be null or empty*");
     }
 
@@ -188,7 +199,7 @@ public class SerializationTests
     [Fact]
     public void SerializeTemplate_Null_Throws()
     {
-        var act = () => _serializer.SerializeTemplate((IMessageTemplate)null!);
+        var act = () => _serializer.SerializeTemplate(TestNull.Ref<IMessageTemplate>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -209,8 +220,8 @@ public class SerializationTests
         const string json = """
         {
           "role": "user",
-          "content": "hello",
-          "id": "abc"
+          "id": "abc",
+          "parts": [{ "type": "text", "text": "hello" }]
         }
         """;
 
@@ -228,7 +239,7 @@ public class SerializationTests
         {
           "id": "prompt-1",
           "messages": [
-            { "role": "user", "content": "hi", "id": "m1" }
+            { "role": "user", "id": "m1", "parts": [{ "type": "text", "text": "hi" }] }
           ]
         }
         """;

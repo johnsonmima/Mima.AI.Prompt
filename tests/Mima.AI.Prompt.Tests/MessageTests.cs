@@ -99,7 +99,7 @@ public class MessageTests
     [InlineData("   ")]
     public void ToolMessage_EmptyToolCallId_Throws(string? toolCallId)
     {
-        var act = () => new ToolMessage(toolCallId!, "content");
+        var act = () => new ToolMessage(toolCallId ?? TestNull.Ref<string>(), "content");
         act.Should().Throw<ArgumentException>().WithMessage("*Tool call ID cannot be null or empty*");
     }
 
@@ -126,7 +126,7 @@ public class MessageTests
     [InlineData("   ")]
     public void FunctionMessage_EmptyFunctionName_Throws(string? functionName)
     {
-        var act = () => new FunctionMessage(functionName!, "content");
+        var act = () => new FunctionMessage(functionName ?? TestNull.Ref<string>(), "content");
         act.Should().Throw<ArgumentException>().WithMessage("*Function name cannot be null or empty*");
     }
 
@@ -136,7 +136,7 @@ public class MessageTests
     [InlineData("   ")]
     public void Message_EmptyContent_Throws(string? content)
     {
-        var act = () => new SystemMessage(content!);
+        var act = () => new SystemMessage(content ?? TestNull.Ref<string>());
         act.Should().Throw<PromptValidationException>().WithMessage("*Message content cannot be null or empty*");
     }
 
@@ -148,7 +148,7 @@ public class MessageTests
     [Fact]
     public void Message_NullRole_Throws()
     {
-        var act = () => new TestMessage(null!, "content");
+        var act = () => new TestMessage(TestNull.Ref<MessageRole>(), "content");
         act.Should().Throw<ArgumentNullException>();
     }
 

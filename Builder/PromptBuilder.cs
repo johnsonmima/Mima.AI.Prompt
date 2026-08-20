@@ -89,9 +89,10 @@ public sealed class PromptBuilder
     }
 
     /// <summary>Adds a system message from content parts (e.g. cached text blocks).</summary>
-    public PromptBuilder AddSystem(IEnumerable<IContentPart> parts, CacheControl? cacheControl = null)
+    /// <summary>Adds a system message from content parts.</summary>
+    public PromptBuilder AddSystem(IEnumerable<IContentPart> parts)
     {
-        _messages.Add(SystemMessage.Create(parts ?? throw new ArgumentNullException(nameof(parts)), cacheControl: cacheControl));
+        _messages.Add(SystemMessage.Create(parts ?? throw new ArgumentNullException(nameof(parts))));
         return this;
     }
 
@@ -122,7 +123,7 @@ public sealed class PromptBuilder
 
     /// <summary>
     /// Adds a multimodal user message from structured content parts.
-    /// Prefer this over string content when mixing text with images, files, or computer-use parts.
+    /// Prefer this over string content when mixing text with images.
     /// </summary>
     /// <param name="parts">Content parts (text, image, file, …). Must not be null.</param>
     /// <param name="name">Optional speaker / agent name for multi-agent transcripts.</param>
@@ -169,7 +170,7 @@ public sealed class PromptBuilder
     }
 
     /// <summary>
-    /// Adds an assistant turn that requests one or more tools (provider <c>tool_calls</c>).
+    /// Adds an assistant turn that requests one or more tools.
     /// Pair each call id with a later <see cref="AddTool"/> result message.
     /// </summary>
     /// <param name="toolCalls">Outbound tool invocations.</param>
@@ -211,8 +212,7 @@ public sealed class PromptBuilder
     }
 
     /// <summary>
-    /// Adds a message with an explicit role (built-in or custom via <see cref="MessageRole.Custom"/>).
-    /// Built-in roles use the concrete message types; custom roles use <see cref="CustomMessage"/>.
+    /// Adds a message with an explicit built-in role.
     /// </summary>
     public PromptBuilder Add(MessageRole role, string content)
     {
@@ -228,13 +228,8 @@ public sealed class PromptBuilder
                 $"Use {nameof(AddTool)} / {nameof(AddFunction)} for '{role.Name}' (they require an id/name).",
                 nameof(role));
 
-        _messages.Add(new CustomMessage(role, content));
-        return this;
+        throw new ArgumentException($"Unsupported role '{role.Name}'.", nameof(role));
     }
-
-    /// <summary>Adds a message with a developer-invented role name.</summary>
-    public PromptBuilder AddCustom(string roleName, string content) =>
-        Add(MessageRole.Custom(roleName), content);
 
     /// <summary>Adds a template whose variables will be resolved on Build().</summary>
     /// <param name="template">The template to add.</param>
@@ -275,7 +270,7 @@ public sealed class PromptBuilder
     }
 
     /// <summary>
-    /// Requests a structured response format from the provider (maps to OpenAI <c>response_format</c>, etc.).
+    /// Requests a structured response format (stored on the prompt; vendor mapping is not in this package).
     /// This is prompt-level metadata — independent of individual message content.
     /// </summary>
     /// <param name="format">Desired output format (JSON, schema, Markdown, …).</param>

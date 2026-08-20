@@ -11,8 +11,8 @@
     <PackageId>Mima.AI.Prompt</PackageId>
     <Title>Mima.AI.Prompt — Prompt Engineering Library</Title>
     <Description>
-      Prompt engineering for .NET: typed messages, templates, validation, serialization, and JSON format adapters.
-      AgentSpec/AgentCrew compose prompts only — this package does not call models, run tools, or emit a provider tools array.
+      Prompt engineering for .NET: typed messages, templates, validation, and canonical JSON serialization.
+      This package does not call models, map vendor APIs, run tools, or include an agent runtime.
     </Description>
     <Authors>Johnson Olusegun</Authors>
     <Company>Mima</Company>
@@ -21,10 +21,10 @@
     <RepositoryUrl>https://github.com/johnsonmima/Mima.AI.Prompt</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryBranch>main</RepositoryBranch>
-    <PackageTags>ai;openai;llm;prompt;prompt-engineering;genai;rag;agents;anthropic;azure-openai;ollama;mima</PackageTags>
+    <PackageTags>ai;llm;prompt;prompt-engineering;genai;mima</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageReleaseNotes>Initial release with core domain model, templates, fluent builder, validation, serialization, caching, versioning, and provider adapters.</PackageReleaseNotes>
+    <PackageReleaseNotes>Prompt domain: messages, templates, builder, validation, canonical JSON serialization, versioning.</PackageReleaseNotes>
 
     <!-- Source Link -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>

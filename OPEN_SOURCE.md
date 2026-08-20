@@ -7,9 +7,7 @@ Each entry explains **what** the file is and **why** it is required or strongly 
 | File / folder | Why it is needed |
 | --------------- | ------------------ |
 | `LICENSE` (MIT) | Legal permission for others to use, modify, and redistribute. Without a license, default copyright applies and many orgs **cannot** consume the package. |
-| `README.md` | First page for GitHub and NuGet. Scope table (what ships vs what the host owns), install, quick start. |
-| `AGENT.md` | Agent-**shaped prompts** only (`AgentSpec` build). No runtime, no crew-as-custom-roles. |
-| `FUTURE.md` | Backlog of APIs **removed** from the current usable cut (agents runtime, extra parts, stubs). Not product docs until restored. |
+| `README.md` | First page for GitHub and NuGet: what the library supports today. |
 | `CHANGELOG.md` | SemVer-friendly history so consumers know what broke/changed between versions (Keep a Changelog). |
 | `CONTRIBUTING.md` | Teaches strangers how to build, test, branch, and open PRs — reduces maintainer load. |
 | `PR.md` | Ordered pull request procedure: update `main`, branch names, CI triggers, version/package metadata, merge, tag. |

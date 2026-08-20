@@ -53,6 +53,7 @@ jobs:
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
+            6.0.x
             8.0.x
             10.0.x
           cache: true
@@ -80,14 +81,11 @@ jobs:
           /p:ThresholdType=line
           /p:ThresholdStat=total
 
-      # Stage step: create nupkg + snupkg (symbols for debugger SourceLink)
+      # Coverlet instruments the test compile. Rebuild the library before pack.
       - name: Pack
-        run: >
-          dotnet pack Mima.AI.Prompt.csproj
-          -c Release
-          --no-build
-          -o ./artifacts
-          /p:ContinuousIntegrationBuild=true
+        run: |
+          dotnet build Mima.AI.Prompt.csproj -c Release --no-restore
+          dotnet pack Mima.AI.Prompt.csproj -c Release --no-build -o ./artifacts /p:ContinuousIntegrationBuild=true
 
       # Request the short-lived key immediately before push (keys expire in ~1 hour).
       - name: NuGet login (OIDC)

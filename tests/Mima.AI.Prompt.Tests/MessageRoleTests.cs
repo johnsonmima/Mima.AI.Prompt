@@ -64,7 +64,7 @@ public class MessageRoleTests
     public void Parse_UnknownRole_Throws()
     {
         var act = () => MessageRole.Parse("wizard");
-        act.Should().Throw<ArgumentException>().WithMessage("*Unknown built-in message role*");
+        act.Should().Throw<ArgumentException>().WithMessage("*Unknown message role*");
     }
 
     [Theory]
@@ -73,7 +73,7 @@ public class MessageRoleTests
     [InlineData("   ")]
     public void Parse_NullOrEmpty_Throws(string? input)
     {
-        var act = () => MessageRole.Parse(input!);
+        var act = () => MessageRole.Parse(input ?? TestNull.Ref<string>());
         act.Should().Throw<ArgumentException>().WithMessage("*Role name cannot be null or empty*");
     }
 

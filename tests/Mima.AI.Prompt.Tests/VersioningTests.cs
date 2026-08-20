@@ -30,21 +30,21 @@ public class VersioningTests
     [InlineData("   ")]
     public void Create_EmptyName_Throws(string? name)
     {
-        var act = () => VersionedPromptAsset<IPrompt>.Create(name!, PromptVersion.Create(1, 0, 0), MakePrompt("v1"));
+        var act = () => VersionedPromptAsset<IPrompt>.Create(name ?? TestNull.Ref<string>(), PromptVersion.Create(1, 0, 0), MakePrompt("v1"));
         act.Should().Throw<ArgumentException>().WithMessage("*Asset name cannot be null or empty*");
     }
 
     [Fact]
     public void Create_NullVersion_Throws()
     {
-        var act = () => VersionedPromptAsset<IPrompt>.Create("MyAsset", null!, MakePrompt("v1"));
+        var act = () => VersionedPromptAsset<IPrompt>.Create("MyAsset", TestNull.Ref<PromptVersion>(), MakePrompt("v1"));
         act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
     public void Create_NullContent_Throws()
     {
-        var act = () => VersionedPromptAsset<IPrompt>.Create("MyAsset", PromptVersion.Create(1, 0, 0), null!);
+        var act = () => VersionedPromptAsset<IPrompt>.Create("MyAsset", PromptVersion.Create(1, 0, 0), TestNull.Ref<IPrompt>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -168,7 +168,7 @@ public class VersioningTests
     [InlineData("   ")]
     public void Create_EmptyAssetName_Throws(string? name)
     {
-        var act = () => PromptVersionHistory<IPrompt>.Create(name!);
+        var act = () => PromptVersionHistory<IPrompt>.Create(name ?? TestNull.Ref<string>());
         act.Should().Throw<ArgumentException>().WithMessage("*Asset name cannot be null or empty*");
     }
 
@@ -179,9 +179,8 @@ public class VersioningTests
         history.Add(PromptVersion.Create(1, 0, 0), MakePrompt("v1"), "Initial release", "Jane");
 
         history.Count.Should().Be(1);
-        var entry = history.Get(PromptVersion.Create(1, 0, 0));
-        entry.Should().NotBeNull();
-        entry!.ChangeLog.Should().Be("Initial release");
+        var entry = Must.Be(history.Get(PromptVersion.Create(1, 0, 0)));
+        entry.ChangeLog.Should().Be("Initial release");
         entry.Author.Should().Be("Jane");
     }
 
@@ -189,7 +188,7 @@ public class VersioningTests
     public void Add_NullVersion_Throws()
     {
         var history = PromptVersionHistory<IPrompt>.Create("SupportBot");
-        var act = () => history.Add(null!, MakePrompt("v1"));
+        var act = () => history.Add(TestNull.Ref<PromptVersion>(), MakePrompt("v1"));
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -197,7 +196,7 @@ public class VersioningTests
     public void Add_NullContent_Throws()
     {
         var history = PromptVersionHistory<IPrompt>.Create("SupportBot");
-        var act = () => history.Add(PromptVersion.Create(1, 0, 0), null!);
+        var act = () => history.Add(PromptVersion.Create(1, 0, 0), TestNull.Ref<IPrompt>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -253,7 +252,7 @@ public class VersioningTests
         history.Add(PromptVersion.Create(2, 0, 0), MakePrompt("v2"));
         history.Add(PromptVersion.Create(1, 5, 0), MakePrompt("v1.5"));
 
-        history.Latest!.Version.Should().Be(PromptVersion.Create(2, 0, 0));
+        Must.Be(history.Latest).Version.Should().Be(PromptVersion.Create(2, 0, 0));
     }
 
     [Fact]
@@ -263,8 +262,8 @@ public class VersioningTests
         history.Add(PromptVersion.Create(1, 0, 0), MakePrompt("v1"));
         history.Add(PromptVersion.Create(2, 0, 0, "beta"), MakePrompt("v2-beta"));
 
-        history.LatestStable!.Version.Should().Be(PromptVersion.Create(1, 0, 0));
-        history.Latest!.Version.Should().Be(PromptVersion.Create(2, 0, 0, "beta"));
+        Must.Be(history.LatestStable).Version.Should().Be(PromptVersion.Create(1, 0, 0));
+        Must.Be(history.Latest).Version.Should().Be(PromptVersion.Create(2, 0, 0, "beta"));
     }
 
     [Fact]
@@ -324,7 +323,7 @@ public class VersioningTests
         var history = PromptVersionHistory<IPrompt>.Create("SupportBot");
         history.Add(PromptVersion.Create(1, 0, 0), MakePrompt("v1"), "Initial release");
 
-        var entry = history.Get(PromptVersion.Create(1, 0, 0))!;
+        var entry = Must.Be(history.Get(PromptVersion.Create(1, 0, 0)));
         entry.ToString().Should().Contain("v1.0.0").And.Contain("Initial release");
     }
 
@@ -334,7 +333,7 @@ public class VersioningTests
         var history = PromptVersionHistory<IPrompt>.Create("SupportBot");
         history.Add(PromptVersion.Create(1, 0, 0), MakePrompt("v1"));
 
-        var entry = history.Get(PromptVersion.Create(1, 0, 0))!;
+        var entry = Must.Be(history.Get(PromptVersion.Create(1, 0, 0)));
         entry.ToString().Should().NotContain(":");
     }
 
@@ -346,7 +345,7 @@ public class VersioningTests
         history.Add(PromptVersion.Create(1, 0, 0), MakePrompt("v1"));
         var after = DateTimeOffset.UtcNow.AddSeconds(1);
 
-        var entry = history.Get(PromptVersion.Create(1, 0, 0))!;
+        var entry = Must.Be(history.Get(PromptVersion.Create(1, 0, 0)));
         entry.Timestamp.Should().BeAfter(before).And.BeBefore(after);
     }
 }

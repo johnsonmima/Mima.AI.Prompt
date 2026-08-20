@@ -2,17 +2,10 @@ namespace Mima.AI.Prompt.Roles;
 
 /// <summary>
 /// Abstract base class representing the role of a message in a conversation with an LLM.
-/// Built-in roles are a closed set; invent additional roles with <see cref="Custom"/>.
+/// Roles are a closed set aligned with chat APIs: system, developer, user, assistant, tool, function.
 /// </summary>
 /// <remarks>
-/// <para>
 /// Built-in hierarchy: System &gt; Developer &gt; User &gt; Assistant &gt; Tool &gt; Function.
-/// </para>
-/// <para>
-/// Use <see cref="Custom"/> for application-specific roles (e.g. "critic", "agent").
-/// <see cref="Parse"/> only accepts built-in names; use <see cref="ParseOrCreate"/> when
-/// reconstructing roles from persisted JSON that may include customs.
-/// </para>
 /// </remarks>
 public abstract class MessageRole : IEquatable<MessageRole>
 {
@@ -51,41 +44,11 @@ public abstract class MessageRole : IEquatable<MessageRole>
     /// </summary>
     public abstract string Description { get; }
 
-    /// <summary>
-    /// Gets whether this role is one of the six built-in provider-aligned roles.
-    /// Custom roles return <c>false</c>.
-    /// </summary>
+    /// <summary>Gets whether this role is a built-in chat role. Always <c>true</c>.</summary>
     public virtual bool IsBuiltIn => true;
 
     /// <summary>
-    /// Creates a developer-invented role with the given wire name.
-    /// If <paramref name="name"/> matches a built-in role (case-insensitive), the built-in singleton is returned.
-    /// </summary>
-    /// <param name="name">Role name written to JSON / provider payloads (normalized to lowercase).</param>
-    /// <param name="priority">Optional sort priority (default: after all built-ins).</param>
-    /// <param name="description">Optional human-readable description.</param>
-    /// <returns>A custom role, or a built-in role when the name collides with a known role.</returns>
-    /// <exception cref="ArgumentException">Thrown when name is null or whitespace.</exception>
-    public static MessageRole Custom(string name, int priority = int.MaxValue, string? description = null)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Role name cannot be null or empty.", nameof(name));
-
-        var normalized = name.Trim().ToLowerInvariant();
-
-        if (TryParse(normalized, out var builtIn) && builtIn is not null)
-            return builtIn;
-
-        return new CustomRole(
-            normalized,
-            priority,
-            string.IsNullOrWhiteSpace(description)
-                ? $"Custom role '{normalized}'."
-                : description!.Trim());
-    }
-
-    /// <summary>
-    /// Parses a built-in role name. Does not create custom roles — unknown names throw.
+    /// Parses a built-in role name. Unknown names throw.
     /// </summary>
     /// <param name="roleName">The role name to parse (case-insensitive).</param>
     /// <returns>The matching built-in <see cref="MessageRole"/> instance.</returns>
@@ -106,39 +69,23 @@ public abstract class MessageRole : IEquatable<MessageRole>
             "tool" => Tool,
             "function" => Function,
             _ => throw new ArgumentException(
-                $"Unknown built-in message role: '{roleName}'. Use {nameof(Custom)} or {nameof(ParseOrCreate)} for invented roles.",
+                $"Unknown message role: '{roleName}'. Supported: system, developer, user, assistant, tool, function.",
                 nameof(roleName))
         };
     }
 
     /// <summary>
-    /// Parses a built-in role, or creates a custom role when the name is not built-in.
-    /// Prefer this when deserializing persisted prompts that may contain custom roles.
-    /// </summary>
-    public static MessageRole ParseOrCreate(string roleName)
-    {
-        if (string.IsNullOrWhiteSpace(roleName))
-        {
-            throw new ArgumentException("Role name cannot be null or empty.", nameof(roleName));
-        }
-
-        return TryParse(roleName, out var builtIn) && builtIn is not null ? builtIn : Custom(roleName);
-    }
-
-    /// <summary>
-    /// Attempts to parse a built-in role name. Returns false for custom / unknown names.
+    /// Attempts to parse a built-in role name. Returns false for unknown names.
     /// </summary>
     public static bool TryParse(string? roleName, out MessageRole? role)
     {
         role = null;
-        if (string.IsNullOrWhiteSpace(roleName))
-        {
+        if (roleName is not { } name || string.IsNullOrWhiteSpace(name))
             return false;
-        }
 
         try
         {
-            role = Parse(roleName!);
+            role = Parse(name);
             return true;
         }
         catch (ArgumentException)
@@ -173,7 +120,7 @@ public abstract class MessageRole : IEquatable<MessageRole>
     public static bool operator !=(MessageRole? left, MessageRole? right) => !(left == right);
 
     /// <summary>
-    /// Restricts subclassing to this assembly. Invent roles with <see cref="Custom"/> instead of inheriting.
+    /// Restricts subclassing to this assembly.
     /// </summary>
     private protected MessageRole() { }
 }

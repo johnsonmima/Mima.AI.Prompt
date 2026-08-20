@@ -12,7 +12,7 @@ public class PromptModelTests
     [Fact]
     public void Ctor_NullMessages_Throws()
     {
-        var act = () => new Models.Prompt(null!);
+        var act = () => new Models.Prompt(TestNull.Ref<IEnumerable<IMessage>>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -126,8 +126,7 @@ public class PromptModelTests
     public void Conversation_WithSystem_SetsSystemMessage()
     {
         var conversation = Conversation.Create("Chat").WithSystem("Be helpful.");
-        conversation.SystemMessage.Should().NotBeNull();
-        conversation.SystemMessage!.Content.Should().Be("Be helpful.");
+        Must.Be(conversation.SystemMessage).Content.Should().Be("Be helpful.");
     }
 
     [Fact]
@@ -155,7 +154,7 @@ public class PromptModelTests
     [Fact]
     public void Conversation_AddMessage_Null_Throws()
     {
-        var act = () => Conversation.Create("Chat").AddMessage(null!);
+        var act = () => Conversation.Create("Chat").AddMessage(TestNull.Ref<IMessage>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -259,52 +258,6 @@ public class PromptModelTests
         prompt.Messages[1].Content.Should().Be("u2");
     }
 
-    // --- PromptChain ---
-
-    [Fact]
-    public void PromptChain_Create_SetsName()
-    {
-        var chain = PromptChain.Create("MyChain");
-        chain.Name.Should().Be("MyChain");
-        chain.StepCount.Should().Be(0);
-    }
-
-    [Fact]
-    public void PromptChain_Add_AppendsPrompt()
-    {
-        var prompt1 = Mima.AI.Prompt.Builder.PromptBuilder.UserOnly("first");
-        var prompt2 = Mima.AI.Prompt.Builder.PromptBuilder.UserOnly("second");
-
-        var chain = PromptChain.Create("MyChain").Add(prompt1).Add(prompt2);
-
-        chain.StepCount.Should().Be(2);
-        chain.Prompts.Should().HaveCount(2);
-    }
-
-    [Fact]
-    public void PromptChain_Add_Null_Throws()
-    {
-        var act = () => PromptChain.Create("MyChain").Add(null!);
-        act.Should().Throw<ArgumentNullException>();
-    }
-
-    [Fact]
-    public void PromptChain_Indexer_ReturnsStepAtIndex()
-    {
-        var prompt1 = Mima.AI.Prompt.Builder.PromptBuilder.UserOnly("first");
-        var chain = PromptChain.Create("MyChain").Add(prompt1);
-
-        chain[0].Should().Be(prompt1);
-    }
-
-    [Fact]
-    public void PromptChain_Indexer_OutOfRange_Throws()
-    {
-        var chain = PromptChain.Create("MyChain");
-        var act = () => chain[0];
-        act.Should().Throw<ArgumentOutOfRangeException>();
-    }
-
     // --- PromptVariable ---
 
     [Fact]
@@ -334,7 +287,7 @@ public class PromptModelTests
     [InlineData("   ")]
     public void PromptVariable_EmptyName_Throws(string? name)
     {
-        var act = () => new PromptVariable(name!);
+        var act = () => new PromptVariable(name ?? TestNull.Ref<string>());
         act.Should().Throw<ArgumentException>().WithMessage("*Variable name cannot be null or empty*");
     }
 

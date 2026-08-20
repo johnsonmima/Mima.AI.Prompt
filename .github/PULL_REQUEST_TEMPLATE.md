@@ -24,3 +24,4 @@
 - [ ] `CHANGELOG.md` updated under `[Unreleased]` (if user-facing)
 - [ ] XML docs added for new public members
 - [ ] No secrets or personal paths committed
+- [ ] Lock files updated if `PackageReference` versions changed (`packages.lock.json`)

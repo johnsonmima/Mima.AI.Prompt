@@ -108,7 +108,7 @@ public class MessageMetadataTests
     [Fact]
     public void SetVersion_NullPromptVersion_Throws()
     {
-        var act = () => MessageMetadata.Empty.SetVersion((PromptVersion)null!);
+        var act = () => MessageMetadata.Empty.SetVersion(TestNull.Ref<PromptVersion>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -116,8 +116,7 @@ public class MessageMetadataTests
     public void SemanticVersion_ValidVersionString_ReturnsParsedVersion()
     {
         var metadata = MessageMetadata.Empty.SetVersion("1.2.3");
-        metadata.SemanticVersion.Should().NotBeNull();
-        metadata.SemanticVersion!.Major.Should().Be(1);
+        Must.Be(metadata.SemanticVersion).Major.Should().Be(1);
     }
 
     [Fact]
@@ -199,7 +198,7 @@ public class MessageMetadataTests
     [Fact]
     public void SetMinCompatibleVersion_NullPromptVersion_Throws()
     {
-        var act = () => MessageMetadata.Empty.SetMinCompatibleVersion((PromptVersion)null!);
+        var act = () => MessageMetadata.Empty.SetMinCompatibleVersion(TestNull.Ref<PromptVersion>());
         act.Should().Throw<ArgumentNullException>();
     }
 

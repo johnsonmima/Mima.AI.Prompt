@@ -9,7 +9,8 @@ using Mima.AI.Prompt.Roles;
 namespace Mima.AI.Prompt.Serialization;
 
 /// <summary>
-/// Serializes prompts and messages including multimodal parts, tool calls, annotations, and cache controls.
+/// Serializes prompts and messages. Message <c>parts</c> are the only persisted body.
+/// <see cref="IMessage.Content"/> is concatenated text parts in memory and is not written.
 /// </summary>
 public sealed class PromptSerializer : IPromptSerializer
 {
@@ -90,12 +91,11 @@ public sealed class PromptSerializer : IPromptSerializer
         var dto = new MessageDto
         {
             Role = message.Role.Name,
-            Content = message.Content,
             Id = message.Id,
             Name = message.Name,
             Metadata = ToMetadataDto(message.Metadata),
-            Parts = message.Parts.Select(ToPartDto).ToList(),
-            Annotations = message.Annotations.Select(a => new AnnotationDto
+            Parts = message.Parts.Count == 0 ? null : message.Parts.Select(ToPartDto).ToList(),
+            Annotations = message.Annotations.Count == 0 ? null : message.Annotations.Select(a => new AnnotationDto
             {
                 Kind = a.Kind,
                 Url = a.Url,
@@ -104,12 +104,7 @@ public sealed class PromptSerializer : IPromptSerializer
                 Quote = a.Quote,
                 StartIndex = a.StartIndex,
                 EndIndex = a.EndIndex
-            }).ToList(),
-            CacheControl = message.CacheControl is null ? null : new CacheControlDto
-            {
-                Type = message.CacheControl.Type,
-                TtlSeconds = message.CacheControl.Ttl?.TotalSeconds
-            }
+            }).ToList()
         };
 
         if (message is ToolMessage tool)
@@ -118,7 +113,6 @@ public sealed class PromptSerializer : IPromptSerializer
             dto.FunctionName = function.FunctionName;
         else if (message is AssistantMessage assistant)
         {
-            dto.Reasoning = assistant.Reasoning;
             dto.Refusal = assistant.Refusal;
             dto.ToolCalls = assistant.ToolCalls.Select(t => new ToolCallDto
             {
@@ -133,108 +127,67 @@ public sealed class PromptSerializer : IPromptSerializer
 
     private static PartDto ToPartDto(IContentPart part) => part switch
     {
-        TextPart t => new PartDto { Type = "text", Text = t.Text, CacheControl = ToCacheDto(t.CacheControl) },
-        ImagePart i => new PartDto { Type = "image", Url = i.Url, Base64Data = i.Base64Data, MediaType = i.MediaType, Detail = i.Detail, CacheControl = ToCacheDto(i.CacheControl) },
-        FilePart f => new PartDto { Type = "file", FileId = f.FileId, Url = f.Url, Base64Data = f.Base64Data, MediaType = f.MediaType, Filename = f.Filename, CacheControl = ToCacheDto(f.CacheControl) },
-        AudioPart a => new PartDto { Type = "audio", Url = a.Url, Base64Data = a.Base64Data, MediaType = a.MediaType, CacheControl = ToCacheDto(a.CacheControl) },
-        VideoPart v => new PartDto { Type = "video", Url = v.Url, Base64Data = v.Base64Data, MediaType = v.MediaType, CacheControl = ToCacheDto(v.CacheControl) },
-        ThinkingPart th => new PartDto { Type = "thinking", Text = th.Text, CacheControl = ToCacheDto(th.CacheControl) },
-        ScreenshotPart s => new PartDto { Type = "screenshot", Url = s.Url, Base64Data = s.Base64Data, MediaType = s.MediaType, CacheControl = ToCacheDto(s.CacheControl) },
-        ComputerActionPart c => new PartDto { Type = "computer_action", Action = c.Action, ArgumentsJson = c.ArgumentsJson, CacheControl = ToCacheDto(c.CacheControl) },
+        TextPart t => new PartDto { Type = "text", Text = t.Text },
+        ImagePart i => new PartDto { Type = "image", Url = i.Url, Base64Data = i.Base64Data, MediaType = i.MediaType, Detail = i.Detail },
         _ => new PartDto { Type = part.Type }
     };
 
-    private static CacheControlDto? ToCacheDto(CacheControl? c) =>
-        c is null ? null : new CacheControlDto { Type = c.Type, TtlSeconds = c.Ttl?.TotalSeconds };
-
     private static IContentPart FromPartDto(PartDto dto) => dto.Type switch
     {
-        "text" => new TextPart(dto.Text ?? string.Empty, FromCacheDto(dto.CacheControl)),
-        "image" when !string.IsNullOrEmpty(dto.Url) => ImagePart.FromUrl(dto.Url!, dto.Detail, FromCacheDto(dto.CacheControl)),
-        "image" => ImagePart.FromBase64(dto.Base64Data ?? string.Empty, dto.MediaType ?? "image/png", dto.Detail, FromCacheDto(dto.CacheControl)),
-        "file" when !string.IsNullOrEmpty(dto.FileId) => FilePart.FromId(dto.FileId!, dto.Filename, FromCacheDto(dto.CacheControl)),
-        "file" when !string.IsNullOrEmpty(dto.Url) => FilePart.FromUrl(dto.Url!, dto.MediaType, dto.Filename, FromCacheDto(dto.CacheControl)),
-        "file" => FilePart.FromBase64(dto.Base64Data ?? string.Empty, dto.MediaType ?? "application/octet-stream", dto.Filename, FromCacheDto(dto.CacheControl)),
-        "audio" when !string.IsNullOrEmpty(dto.Url) => AudioPart.FromUrl(dto.Url!, dto.MediaType, FromCacheDto(dto.CacheControl)),
-        "audio" => AudioPart.FromBase64(dto.Base64Data ?? string.Empty, dto.MediaType ?? "audio/mpeg", FromCacheDto(dto.CacheControl)),
-        "video" when !string.IsNullOrEmpty(dto.Url) => VideoPart.FromUrl(dto.Url!, dto.MediaType, FromCacheDto(dto.CacheControl)),
-        "video" => VideoPart.FromBase64(dto.Base64Data ?? string.Empty, dto.MediaType ?? "video/mp4", FromCacheDto(dto.CacheControl)),
-        "thinking" => string.IsNullOrWhiteSpace(dto.Text)
-            ? new TextPart(string.Empty, FromCacheDto(dto.CacheControl))
-            : ThinkingPart.Create(dto.Text!, FromCacheDto(dto.CacheControl)),
-        "screenshot" when !string.IsNullOrEmpty(dto.Url) => ScreenshotPart.FromUrl(dto.Url!, FromCacheDto(dto.CacheControl)),
-        "screenshot" => ScreenshotPart.FromBase64(dto.Base64Data ?? string.Empty, dto.MediaType ?? "image/png", FromCacheDto(dto.CacheControl)),
-        "computer_action" => ComputerActionPart.Create(dto.Action ?? "unknown", dto.ArgumentsJson, FromCacheDto(dto.CacheControl)),
+        "image" when dto.Url is { Length: > 0 } url => ImagePart.FromUrl(url, dto.Detail),
+        "image" => ImagePart.FromBase64(dto.Base64Data ?? string.Empty, dto.MediaType ?? "image/png", dto.Detail),
         _ => new TextPart(dto.Text ?? string.Empty)
     };
 
-    private static CacheControl? FromCacheDto(CacheControlDto? dto)
-    {
-        if (dto is null || string.IsNullOrWhiteSpace(dto.Type)) return null;
-        TimeSpan? ttl = dto.TtlSeconds is null ? null : TimeSpan.FromSeconds(dto.TtlSeconds.Value);
-        return CacheControl.Custom(dto.Type, ttl);
-    }
-
     private static IMessage FromDto(MessageDto dto)
     {
-        var role = MessageRole.ParseOrCreate(dto.Role);
+        var role = MessageRole.Parse(dto.Role);
         var metadata = FromMetadataDto(dto.Metadata);
         var annotations = dto.Annotations?.Select(a =>
             new MessageAnnotation(a.Kind, a.Url, a.FileId, a.Title, a.Quote, a.StartIndex, a.EndIndex)).ToList();
-        var cache = FromCacheDto(dto.CacheControl);
 
-        // Parts are canonical. Content is only used when parts were omitted (older / minimal JSON).
         IReadOnlyList<IContentPart>? parts = dto.Parts is { Count: > 0 }
             ? dto.Parts.Select(FromPartDto).ToList()
             : null;
-        var contentShorthand = parts is null ? dto.Content : null;
+
+        var toolCalls = dto.ToolCalls?.Select(t => new ToolCall(t.Id, t.Name, t.ArgumentsJson ?? "{}")).ToList();
+        var allowEmptyParts = role == MessageRole.Assistant
+            && ((toolCalls is { Count: > 0 }) || !string.IsNullOrWhiteSpace(dto.Refusal));
+
+        if (parts is null && !allowEmptyParts)
+            throw new JsonException("Message JSON requires a non-empty parts array.");
 
         if (role == MessageRole.System)
-        {
-            return parts is not null
-                ? SystemMessage.Create(parts, metadata, dto.Id, dto.Name, annotations, cache)
-                : new SystemMessage(contentShorthand ?? string.Empty, metadata, dto.Id);
-        }
+            return SystemMessage.Create(
+                parts ?? throw new JsonException("Message JSON requires a non-empty parts array."),
+                metadata, dto.Id, dto.Name, annotations);
 
         if (role == MessageRole.Developer)
-        {
-            return parts is not null
-                ? DeveloperMessage.Create(parts, metadata, dto.Id, cache)
-                : new DeveloperMessage(contentShorthand ?? string.Empty, metadata, dto.Id);
-        }
+            return DeveloperMessage.Create(
+                parts ?? throw new JsonException("Message JSON requires a non-empty parts array."),
+                metadata, dto.Id);
 
         if (role == MessageRole.User)
-        {
-            return parts is not null
-                ? UserMessage.Create(parts, metadata, dto.Name, dto.Id, annotations, cache)
-                : new UserMessage(contentShorthand ?? string.Empty, metadata, dto.Id);
-        }
+            return UserMessage.Create(
+                parts ?? throw new JsonException("Message JSON requires a non-empty parts array."),
+                metadata, dto.Name, dto.Id, annotations);
 
         if (role == MessageRole.Assistant)
-        {
-            var toolCalls = dto.ToolCalls?.Select(t => new ToolCall(t.Id, t.Name, t.ArgumentsJson ?? "{}")).ToList();
             return AssistantMessage.CreateDetailed(
-                content: contentShorthand,
                 parts: parts,
                 toolCalls: toolCalls,
-                reasoning: dto.Reasoning,
                 refusal: dto.Refusal,
                 metadata: metadata,
                 id: dto.Id,
                 name: dto.Name,
-                annotations: annotations,
-                cacheControl: cache);
-        }
+                annotations: annotations);
+
+        var textBody = string.Concat((parts ?? Array.Empty<IContentPart>()).OfType<TextPart>().Select(p => p.Text));
 
         if (role == MessageRole.Tool)
-            return new ToolMessage(dto.ToolCallId ?? dto.Id ?? "unknown", dto.Content, metadata, dto.Id);
+            return new ToolMessage(dto.ToolCallId ?? dto.Id ?? "unknown", textBody, metadata, dto.Id);
 
-        if (role == MessageRole.Function)
-            return new FunctionMessage(dto.FunctionName ?? dto.Id ?? "unknown", dto.Content, metadata, dto.Id);
-
-        return parts is not null
-            ? CustomMessage.Create(role, parts, metadata, dto.Id, dto.Name, annotations, cache)
-            : new CustomMessage(role, contentShorthand ?? string.Empty, metadata, dto.Id);
+        return new FunctionMessage(dto.FunctionName ?? dto.Id ?? "unknown", textBody, metadata, dto.Id);
     }
 
     private static MetadataDto ToMetadataDto(MessageMetadata metadata) => new()
@@ -262,12 +215,12 @@ public sealed class PromptSerializer : IPromptSerializer
         var instructions = dto.Instructions ?? string.Empty;
         var schema = dto.Schema;
 
-        if (!string.IsNullOrEmpty(schema))
+        if (schema is { Length: > 0 } schemaText)
         {
             if (string.Equals(type, "json", StringComparison.OrdinalIgnoreCase))
-                return OutputFormat.JsonWithSchema(schema!);
+                return OutputFormat.JsonWithSchema(schemaText);
             if (string.Equals(type, "yaml", StringComparison.OrdinalIgnoreCase))
-                return OutputFormat.YamlWithSchema(schema!);
+                return OutputFormat.YamlWithSchema(schemaText);
         }
 
         return OutputFormat.Custom(type, instructions, schema);
@@ -294,17 +247,14 @@ public sealed class PromptSerializer : IPromptSerializer
     private sealed class MessageDto
     {
         [JsonPropertyName("role")] public string Role { get; set; } = string.Empty;
-        [JsonPropertyName("content")] public string Content { get; set; } = string.Empty;
         [JsonPropertyName("id")] public string? Id { get; set; }
         [JsonPropertyName("name")] public string? Name { get; set; }
         [JsonPropertyName("toolCallId")] public string? ToolCallId { get; set; }
         [JsonPropertyName("functionName")] public string? FunctionName { get; set; }
-        [JsonPropertyName("reasoning")] public string? Reasoning { get; set; }
         [JsonPropertyName("refusal")] public string? Refusal { get; set; }
         [JsonPropertyName("toolCalls")] public List<ToolCallDto>? ToolCalls { get; set; }
         [JsonPropertyName("parts")] public List<PartDto>? Parts { get; set; }
         [JsonPropertyName("annotations")] public List<AnnotationDto>? Annotations { get; set; }
-        [JsonPropertyName("cacheControl")] public CacheControlDto? CacheControl { get; set; }
         [JsonPropertyName("metadata")] public MetadataDto? Metadata { get; set; }
     }
 
@@ -316,11 +266,6 @@ public sealed class PromptSerializer : IPromptSerializer
         [JsonPropertyName("base64Data")] public string? Base64Data { get; set; }
         [JsonPropertyName("mediaType")] public string? MediaType { get; set; }
         [JsonPropertyName("detail")] public string? Detail { get; set; }
-        [JsonPropertyName("fileId")] public string? FileId { get; set; }
-        [JsonPropertyName("filename")] public string? Filename { get; set; }
-        [JsonPropertyName("action")] public string? Action { get; set; }
-        [JsonPropertyName("argumentsJson")] public string? ArgumentsJson { get; set; }
-        [JsonPropertyName("cacheControl")] public CacheControlDto? CacheControl { get; set; }
     }
 
     private sealed class ToolCallDto
@@ -339,12 +284,6 @@ public sealed class PromptSerializer : IPromptSerializer
         [JsonPropertyName("quote")] public string? Quote { get; set; }
         [JsonPropertyName("startIndex")] public int? StartIndex { get; set; }
         [JsonPropertyName("endIndex")] public int? EndIndex { get; set; }
-    }
-
-    private sealed class CacheControlDto
-    {
-        [JsonPropertyName("type")] public string Type { get; set; } = string.Empty;
-        [JsonPropertyName("ttlSeconds")] public double? TtlSeconds { get; set; }
     }
 
     private sealed class OutputFormatDto

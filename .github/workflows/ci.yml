@@ -73,9 +73,6 @@ jobs:
     name: Test
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -119,98 +116,6 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
-      # Stage step: markdown table for the Actions summary and the pull request
-      - name: Render coverage report
-        if: always()
-        id: coverage_md
-        shell: python
-        run: |
-          import os
-          from collections import defaultdict
-          from pathlib import Path
-          import xml.etree.ElementTree as ET
-
-          report = Path("tests/Mima.AI.Prompt.Tests/coverage/coverage.cobertura.xml")
-          out = Path("coverage-report.md")
-          marker = "<!-- mima-ai-prompt-coverage -->"
-
-          def pct(rate: str) -> float:
-              return float(rate or "0") * 100
-
-          if not report.is_file():
-              body = f"{marker}\n## Coverage\n\nCobertura report was not produced.\n"
-              out.write_text(body, encoding="utf-8")
-              summary = os.environ.get("GITHUB_STEP_SUMMARY")
-              if summary:
-                  with open(summary, "a", encoding="utf-8") as fh:
-                      fh.write(body)
-              raise SystemExit(0)
-
-          root = ET.parse(report).getroot()
-          line_pct = pct(root.attrib.get("line-rate"))
-          branch_pct = pct(root.attrib.get("branch-rate"))
-          lines_covered = root.attrib.get("lines-covered", "?")
-          lines_valid = root.attrib.get("lines-valid", "?")
-
-          files = defaultdict(lambda: {"line": 0.0, "branch": 0.0, "n": 0})
-          for cls in root.findall(".//class"):
-              name = cls.attrib.get("filename") or cls.attrib.get("name") or "?"
-              files[name]["line"] += pct(cls.attrib.get("line-rate"))
-              files[name]["branch"] += pct(cls.attrib.get("branch-rate"))
-              files[name]["n"] += 1
-
-          rows = []
-          for name, stats in files.items():
-              n = stats["n"] or 1
-              rows.append((stats["line"] / n, name, stats["branch"] / n))
-          rows.sort(key=lambda r: (r[0], r[1]))
-
-          gate = 95.0
-          status = "pass" if line_pct >= gate else "fail"
-          lines = [
-              marker,
-              "## Coverage — Mima.AI.Prompt",
-              "",
-              f"| Metric | Value | Gate |",
-              f"| --- | --- | --- |",
-              f"| Line | **{line_pct:.2f}%** ({lines_covered}/{lines_valid}) | ≥ {gate:.0f}% (**{status}**) |",
-              f"| Branch | {branch_pct:.2f}% | (informational) |",
-              "",
-              "<details>",
-              "<summary>Per-file line coverage (lowest first)</summary>",
-              "",
-              "| File | Line | Branch |",
-              "| --- | ---: | ---: |",
-          ]
-          for line_p, name, branch_p in rows:
-              flag = " " if line_p >= gate else " ⚠️"
-              lines.append(f"| `{name}` | {line_p:.1f}%{flag} | {branch_p:.1f}% |")
-          lines.extend(["", "</details>", ""])
-          body = "\n".join(lines)
-          out.write_text(body, encoding="utf-8")
-          summary = os.environ.get("GITHUB_STEP_SUMMARY")
-          if summary:
-              with open(summary, "a", encoding="utf-8") as fh:
-                  fh.write(body)
-
-      - name: Comment coverage on pull request
-        if: always() && github.event_name == 'pull_request'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          BODY_FILE=coverage-report.md
-          test -f "$BODY_FILE" || exit 0
-          COMMENT_ID=$(gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
-            --jq '.[] | select(.body | contains("<!-- mima-ai-prompt-coverage -->")) | .id' | head -n 1)
-          if [ -n "$COMMENT_ID" ]; then
-            gh api --method PATCH "repos/${{ github.repository }}/issues/comments/${COMMENT_ID}" \
-              -F body=@"$BODY_FILE"
-          else
-            gh api --method POST "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
-              -F body=@"$BODY_FILE"
-          fi
-
   # ---------------------------------------------------------------------------
   # Stage: PACK
   # Produces the NuGet package (.nupkg + .snupkg) to prove packing works.
@@ -228,6 +133,7 @@ jobs:
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
+            6.0.x
             8.0.x
             10.0.x
           cache: true
@@ -250,5 +156,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: nuget-packages
-          path: ./artifacts/*.nupkg
+          path: ./artifacts/
           retention-days: 14

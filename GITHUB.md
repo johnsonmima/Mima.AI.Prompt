@@ -86,7 +86,7 @@ Add topics that aid search, such as `dotnet`, `csharp`, `llm`, `prompt-engineeri
 
 Keep visibility **Public**. Public repositories on GitHub.com receive complimentary GitHub-hosted Actions minutes for standard workflows.
 
-Under **Features**, enable **Issues**. Leave **Discussions** optional. Disable **Wikis**; project documentation lives in `README.md` and `AGENT.md`. **Projects** and **Sponsorships** are optional.
+Under **Features**, enable **Issues**. Leave **Discussions** optional. Disable **Wikis**; project documentation lives in `README.md`. **Projects** and **Sponsorships** are optional.
 
 Pull request merge options on the same page are described in section 7.
 
@@ -131,8 +131,6 @@ Both workflows use GitHub-hosted `ubuntu-latest` runners. Self-hosted runners ar
 Navigate to **Settings**, then **Actions**, then **General**.
 
 Set **Actions permissions** to **Allow all actions and reusable workflows**. The workflows use `actions/checkout`, `actions/setup-dotnet`, `actions/upload-artifact`, and `NuGet/login`. Restricting the repository to local actions only will fail those steps.
-
-The Test job posts a coverage comment on pull requests. That needs `pull-requests: write` on the job (already declared in `ci.yml`) and a token that can comment. Keep **Workflow permissions** as **Read and write permissions**, or keep the default read token and rely on the Test job’s explicit `permissions` block.
 
 Disable **Allow GitHub Actions to create and approve pull requests**. Maintainers merge pull requests. Workflows must not approve their own changes.
 
@@ -200,11 +198,7 @@ The job is named `Test`, which is the label shown on Actions and on pull request
 
 If this step fails, tests failed, coverage is below 95 percent, or an earlier step failed. Fix tests or add coverage. Do not lower the threshold in a product change without a documented reason.
 
-**Upload coverage report** uses `actions/upload-artifact@v4` with `if: always()` so the report is available even when tests fail. The artifact name is `coverage-report`. The path is `tests/Mima.AI.Prompt.Tests/coverage/`. `if-no-files-found: ignore` prevents a missing report from failing the job when Coverlet never ran. Retention is 14 days.
-
-**Render coverage report** reads `coverage.cobertura.xml` and writes a markdown table (library totals plus per-file line and branch rates). It appends that table to the GitHub Actions job summary on the **Test** check. Open the Test job and expand **Summary** to read it.
-
-**Comment coverage on pull request** posts or updates a sticky comment on the pull request with the same table. The Test job requests `pull-requests: write`. Fork pull requests may skip the comment if `GITHUB_TOKEN` cannot write to the parent repo; the job summary and coverage artifact still work. `continue-on-error: true` keeps a comment failure from failing Test after coverage already passed.
+**Upload coverage report** uses `actions/upload-artifact@v4` with `if: always()` so the report is available even when tests fail. The artifact name is `coverage-report`. The path is `tests/Mima.AI.Prompt.Tests/coverage/`. `if-no-files-found: ignore` prevents a missing report from failing the job when Coverlet never ran. Retention is 14 days. Coverlet already fails the Test job when line coverage is below 95 percent; there is no markdown summary or pull-request comment.
 
 The Test job does not publish to nuget.org.
 
@@ -218,7 +212,7 @@ It declares `needs: test`, so it runs only after Test (and therefore Build) succ
 
 **Checkout repository** uses `actions/checkout@v7`. Packing needs `README.md`, `LICENSE`, the project file, and `packages.lock.json` from the same commit.
 
-**Setup .NET SDK** uses `actions/setup-dotnet@v6` with 8.0.x and 10.0.x only. Packing does not execute the net6.0 test host. SDK 8 and 10 can pack all target frameworks in `Mima.AI.Prompt.csproj` (`netstandard2.0` through `net10.0`). Omitting 6.0.x reduces setup time.
+**Setup .NET SDK** uses `actions/setup-dotnet@v6` with 6.0.x, 8.0.x, and 10.0.x so every library TFM (including `net6.0`) has a matching targeting pack.
 
 `cache: true` uses the same NuGet cache mechanism as the other jobs. `cache-dependency-path` is `packages.lock.json` only, because this job restores the library project, not the test project.
 
@@ -228,7 +222,7 @@ It declares `needs: test`, so it runs only after Test (and therefore Build) succ
 
 On a successful run, open **Actions**, the run, **Pack**, then **Artifacts**. The package is for inspection. Continuous integration must not call `dotnet nuget push`. Fork pull requests must never receive a nuget.org key.
 
-**Upload NuGet artifacts** uses `actions/upload-artifact@v4` with artifact name `nuget-packages`, path `./artifacts/*.nupkg`, and 14-day retention.
+**Upload NuGet artifacts** uses `actions/upload-artifact@v4` with artifact name `nuget-packages`, path `./artifacts/` (`.nupkg` and `.snupkg`), and 14-day retention.
 
 If Pack fails, typical causes are a lock-file mismatch, missing pack assets such as the README or LICENSE, or metadata errors from `dotnet pack`. Fix the project or lock files. Do not skip Pack on `main`.
 
@@ -245,6 +239,8 @@ The `dry_run` input applies to manual runs. The default `true` restores, builds,
 A tag push always attempts the publish steps, because the condition is `github.event_name == 'push' || inputs.dry_run == 'false'`.
 
 Those steps exchange a GitHub OIDC token for a one-hour nuget.org API key (section 6), then call `dotnet nuget push`. A dry run skips both. The CI workflow never publishes.
+
+After tests (which collect Coverlet coverage), Release **rebuilds** `Mima.AI.Prompt.csproj` then packs with `--no-build` so the nupkg is not an instrumented test compile. SDK 6.0.x, 8.0.x, and 10.0.x are installed so every library TFM packs.
 
 Do not store a long-lived nuget.org API key in the repository or in workflow YAML.
 
@@ -466,7 +462,7 @@ Navigate to **Settings**, then **General**, then **Features**, and enable **Issu
 
 The primary feed is nuget.org, not GitHub Packages.
 
-CI **Pack** only uploads a `.nupkg` artifact on the Actions run (section 5.3). Publishing uses the Release workflow and Trusted Publishing (sections 5.4 and 6).
+CI **Pack** uploads `.nupkg` and `.snupkg` artifacts on the Actions run (section 5.3). Publishing uses the Release workflow and Trusted Publishing (sections 5.4 and 6).
 
 Enable `packages: write` in `release.yml` only if the project also pushes to GitHub Packages.
 

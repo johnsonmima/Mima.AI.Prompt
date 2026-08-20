@@ -67,20 +67,30 @@ public sealed class Conversation
     }
 
     /// <summary>Adds a user message.</summary>
-    /// <param name="content">The user's input.</param>
-    /// <returns>This conversation for chaining.</returns>
     public Conversation AddUser(string content)
     {
         _messages.Add(new UserMessage(content));
         return this;
     }
 
+    /// <summary>Adds a multimodal user message (text and/or images).</summary>
+    public Conversation AddUser(IEnumerable<IContentPart> parts)
+    {
+        _messages.Add(UserMessage.Create(parts ?? throw new ArgumentNullException(nameof(parts))));
+        return this;
+    }
+
     /// <summary>Adds an assistant message.</summary>
-    /// <param name="content">The assistant's response.</param>
-    /// <returns>This conversation for chaining.</returns>
     public Conversation AddAssistant(string content)
     {
         _messages.Add(new AssistantMessage(content));
+        return this;
+    }
+
+    /// <summary>Adds an assistant tool-call turn.</summary>
+    public Conversation AddAssistant(AssistantMessage message)
+    {
+        _messages.Add(message ?? throw new ArgumentNullException(nameof(message)));
         return this;
     }
 

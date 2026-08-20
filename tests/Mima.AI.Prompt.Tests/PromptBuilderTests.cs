@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Mima.AI.Prompt.Builder;
 using Mima.AI.Prompt.Exceptions;
+using Mima.AI.Prompt.Interfaces;
 using Mima.AI.Prompt.Messages;
 using Mima.AI.Prompt.Models;
 using Mima.AI.Prompt.Roles;
@@ -32,7 +33,7 @@ public class PromptBuilderTests
     [Fact]
     public void Use_Template_Null_Throws()
     {
-        var act = () => PromptBuilder.Use((Mima.AI.Prompt.Interfaces.IMessageTemplate)null!);
+        var act = () => PromptBuilder.Use(TestNull.Ref<IMessageTemplate>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -48,7 +49,7 @@ public class PromptBuilderTests
     [Fact]
     public void Use_Message_Null_Throws()
     {
-        var act = () => PromptBuilder.Use((Mima.AI.Prompt.Interfaces.IMessage)null!);
+        var act = () => PromptBuilder.Use(TestNull.Ref<IMessage>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -115,7 +116,7 @@ public class PromptBuilderTests
     [Fact]
     public void AddMessage_Null_Throws()
     {
-        var act = () => PromptBuilder.Create().AddMessage(null!);
+        var act = () => PromptBuilder.Create().AddMessage(TestNull.Ref<IMessage>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -132,14 +133,14 @@ public class PromptBuilderTests
     [Fact]
     public void AddTemplate_Null_Throws()
     {
-        var act = () => PromptBuilder.Create().AddTemplate(null!);
+        var act = () => PromptBuilder.Create().AddTemplate(TestNull.Ref<IMessageTemplate>());
         act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
     public void With_NullValue_Throws()
     {
-        var act = () => PromptBuilder.Create().With("name", null!);
+        var act = () => PromptBuilder.Create().With("name", TestNull.Ref<object>());
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -149,7 +150,7 @@ public class PromptBuilderTests
     [InlineData("   ")]
     public void With_EmptyName_Throws(string? name)
     {
-        var act = () => PromptBuilder.Create().With(name!, "value");
+        var act = () => PromptBuilder.Create().With(name ?? TestNull.Ref<string>(), "value");
         act.Should().Throw<ArgumentException>().WithMessage("*Variable name cannot be null or empty*");
     }
 
@@ -223,6 +224,20 @@ public class PromptBuilderTests
         var act = () => PromptBuilder.Use(template).AddUser("hi").Build();
 
         act.Should().Throw<PromptValidationException>().WithMessage("*variable(s) but no values were provided*");
+    }
+
+    [Fact]
+    public void Build_PartialWith_MissingProduct_Throws()
+    {
+        var template = SystemTemplate.Create("You are a {{profession}}. Product: {{product}}.");
+        var act = () => PromptBuilder
+            .Use(template)
+            .With("profession", "Teacher")
+            .AddUser("Hello")
+            .Build();
+
+        act.Should().Throw<PromptValidationException>()
+            .WithMessage("*Missing required variable: 'product'*");
     }
 
     [Fact]
